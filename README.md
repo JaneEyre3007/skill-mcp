@@ -54,12 +54,18 @@ web-reverse-backup/
 
 ### 第 1 步：拿到仓库与大文件
 ```powershell
-git clone https://github.com/<你的仓库>.git web-reverse
+git clone https://github.com/JaneEyre3007/skill-mcp.git web-reverse
 ```
-3 个大文件不在 git 里（体积限制），从 **GitHub Release** 下载（见仓库 Releases 页）：
-- `camoufox-reverse-135.0.1-beta.24.zip`（518 MB）
-- `CloakBrowser-146.0.7680.177.zip`（196 MB）
-- `FireFox-Reverse.zip`（126 MB）
+3 个大文件不在 git 里（体积限制），从 **GitHub Release** 下载（直接链接）：
+- <https://github.com/JaneEyre3007/skill-mcp/releases/download/v1.0.0/camoufox-reverse-135.0.1-beta.24.zip>（518 MB）
+- <https://github.com/JaneEyre3007/skill-mcp/releases/download/v1.0.0/CloakBrowser-146.0.7680.177.zip>（196 MB）
+- <https://github.com/JaneEyre3007/skill-mcp/releases/download/v1.0.0/FireFox-Reverse.zip>（126 MB）
+
+> 更省事的办法：把 `-ReleaseBaseUrl` 传给恢复脚本，它会自动下载这三个文件：
+> ```powershell
+> powershell -ExecutionPolicy Bypass -File restore\restore.ps1 `
+>   -ReleaseBaseUrl "https://github.com/JaneEyre3007/skill-mcp/releases/download/v1.0.0"
+> ```
 
 ### 第 2 步：一键恢复
 ```powershell
@@ -72,7 +78,7 @@ powershell -ExecutionPolicy Bypass -File restore\restore.ps1
 `%USERPROFILE%\.dsh\.agent-presets\web-reverse\`（自动把模板占位符替换成你机器上的真实路径）。
 
 > 若 zips 已手动下载到 `release-assets\`，脚本直接使用本地文件；否则用
-> `-ReleaseBaseUrl "https://github.com/<OWNER>/<REPO>/releases/download/<TAG>"` 让脚本自动下载。
+> `-ReleaseBaseUrl "https://github.com/JaneEyre3007/skill-mcp/releases/download/v1.0.0"` 让脚本自动下载。
 > 可选参数见脚本头部注释（`-PythonExe`、`-FirefoxRoot`、`-WmpfRoot`、`-DshHome` 等）。
 
 ### 第 3 步：启动两个"常驻服务"
