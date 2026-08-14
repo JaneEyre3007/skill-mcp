@@ -48,43 +48,35 @@ web-reverse-backup/
 
 ## 新电脑从零恢复（完整步骤）
 
-### 第 0 步：基础环境
-1. 安装 **Git**、**Python 3.13+**（勾选 "Add python to PATH"）、**Node 22 LTS**。
-2. 安装 DeepSeek Harness：`npm install -g @deepseek-ai/dsh`，确保 `dsh` 命令可用。
+> 全程只有两处需要人点一下：装软件时的 **UAC 确认框**、`git clone` 时的 **GitHub 登录窗口**。
+> 其余全部由脚本自动完成——也可以直接让一个带 Shell 能力的 AI（DSH / Claude Code / Codex / opencode）
+> 读本 README 替你执行下面所有命令。
 
-### 第 1 步：拿到仓库与大文件
+### 第 1 步：克隆仓库（唯一一次登录）
 ```powershell
 git clone https://github.com/JaneEyre3007/skill-mcp.git web-reverse
-```
-3 个大文件（约 840MB）在 GitHub Release `v1.0.0` 里。**本仓库是私有仓库**，推荐两种方式：
-
-**方式 A（推荐，全自动）**：给 restore.ps1 一个 GitHub token，脚本走 API 自动下载并解压。
-网页登录 GitHub → Settings → Developer settings → Personal access tokens：
-- classic token：勾选 `repo` 范围；或
-- fine-grained token：仓库选本仓库，权限 Contents = Read-only。
-```powershell
-powershell -ExecutionPolicy Bypass -File restore\restore.ps1 -GhToken "<你的token>"
-```
-
-**方式 B（手动）**：浏览器登录 GitHub 后打开
-<https://github.com/JaneEyre3007/skill-mcp/releases/tag/v1.0.0> 手动下载 3 个 zip
-（camoufox-reverse-135.0.1-beta.24.zip / CloakBrowser-146.0.7680.177.zip / FireFox-Reverse.zip），
-放进仓库根目录 `release-assets\`（没有就新建），然后直接跑 `restore.ps1`（不带 token 参数）。
-
-### 第 2 步：一键恢复
-```powershell
 cd web-reverse
-powershell -ExecutionPolicy Bypass -File restore\restore.ps1
 ```
-脚本自动完成：定位 Python → `pip install` 依赖（精确版本）→ `python -m camoufox fetch` 拉官方 Camoufox
-并放进 `mcps\camoufox-toolchain\runtime\Camoufox\` → 解压 3 个 Release zip 到对应位置 → clone WMPFDebugger
-并 `npm install` → 给 js-reverse / frx 补 `npm install` → 修补两个 skill 的路径配置文件 → 生成 DSH preset 到
-`%USERPROFILE%\.dsh\.agent-presets\web-reverse\`（自动把模板占位符替换成你机器上的真实路径）。
+私有仓库首次 clone 会弹出 GitHub 登录窗口，浏览器授权一次即可（凭据会被记住，后面自动复用）。
 
-> 若 zips 已手动下载到 `release-assets\`，脚本直接使用本地文件；私有仓库建议用
-> `-GhToken`（API 下载，见第 1 步）；公开仓库可用
-> `-ReleaseBaseUrl "https://github.com/<OWNER>/<REPO>/releases/download/<TAG>"`。
-> 可选参数见脚本头部注释（`-PythonExe`、`-FirefoxRoot`、`-WmpfRoot`、`-DshHome` 等）。
+### 第 2 步：一条命令装到底
+```powershell
+powershell -ExecutionPolicy Bypass -File restore\restore.ps1 -InstallBase
+```
+`-InstallBase` 会先自动补齐基础软件：检测并用 **winget 装 Git / Python 3.13 / Node LTS**（缺啥装啥，
+弹 UAC 点"是"），再用 **npm 装 DSH**。随后自动完成：定位 Python → `pip install` 依赖（精确版本）→
+`python -m camoufox fetch` 拉官方 Camoufox 并放入 `mcps\camoufox-toolchain\runtime\Camoufox\` →
+**复用刚才的 git 登录凭据走 API 自动下载 3 个 Release 包并解压到位** → clone WMPFDebugger 并 `npm install`
+→ 给 js-reverse / frx 补 `npm install` → 修补两个 skill 的路径配置 → 生成 DSH preset 到
+`%USERPROFILE%\.dsh\.agent-presets\web-reverse\`（模板占位符自动替换成真实路径）。
+
+> **备选方式**（不装基础软件 / 不自动下载大文件时用）：
+> - 跳过基础软件：直接跑 `restore.ps1`（不加 `-InstallBase`），前提是已装好 Git/Python/Node/DSH。
+> - 手动下载 3 个 zip：浏览器登录 GitHub 打开 <https://github.com/JaneEyre3007/skill-mcp/releases/tag/v1.0.0>，
+>   把 camoufox-reverse-135.0.1-beta.24.zip / CloakBrowser-146.0.7680.177.zip / FireFox-Reverse.zip
+>   放进 `release-assets\`，脚本会优先用本地文件。
+> - 显式 token：`restore.ps1 -GhToken "<你的token>"`（classic PAT 勾 `repo`，或 fine-grained Contents=Read）。
+> - 其它可选参数见脚本头部注释（`-PythonExe`、`-FirefoxRoot`、`-WmpfRoot`、`-DshHome`、`-Skip*` 系列）。
 
 ### 第 3 步：启动两个"常驻服务"
 - **FireFox Reverse**（`mcp__frx__*` 依赖）：

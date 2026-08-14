@@ -12,10 +12,14 @@
 #   -DshHome <dir>       DSH home (default: %USERPROFILE%\.dsh)
 #   -FirefoxRoot <dir>   FireFox Reverse extraction root (default: D:\develop_software)
 #   -WmpfRoot <dir>      WMPFDebugger clone location (default: <RepoRoot>\runtimes\WMPFDebugger)
+#   -InstallBase         auto-install missing base toolchain via winget
+#                        (Git / Python 3.13 / Node LTS) and DSH via npm.
+#                        UAC prompts may appear for elevated installers.
 #   -GhToken <pat>       GitHub token for downloading release assets from a
 #                        PRIVATE repo via the API (classic PAT with "repo"
 #                        scope, or fine-grained PAT with Contents: Read).
-#                        Strongly recommended for this repo.
+#                        If omitted, the script reuses the git credential
+#                        stored by the earlier `git clone` login (GCM).
 #   -GhRepo <owner/repo> repo for release downloads (default: JaneEyre3007/skill-mcp)
 #   -ReleaseBaseUrl <url> base URL of GitHub release assets, e.g.
 #                        https://github.com/<OWNER>/<REPO>/releases/download/<TAG>
@@ -33,6 +37,7 @@ param(
     [string]$ReleaseBaseUrl = '',
     [string]$GhToken = '',
     [string]$GhRepo = 'JaneEyre3007/skill-mcp',
+    [switch]$InstallBase,
     [switch]$SkipNpm, [switch]$SkipPip, [switch]$SkipFetch,
     [switch]$SkipZips, [switch]$SkipClone, [switch]$SkipPreset
 )
@@ -55,6 +60,19 @@ function Extract-Zip([string]$zip, [string]$dest) {
 }
 
 function Get-Zip([string]$name) {
+    if (-not $GhToken) {
+        $local = Join-Path $RepoRoot "release-assets\$name"
+        if (Test-Path $local) { return $local }
+        try {
+            $env:GCM_INTERACTIVE = 'never'
+            $cred = "protocol=https`nhost=github.com`n`n" | git credential fill 2>$null
+            $pw = ($cred | Select-String '^password=' | Select-Object -First 1)
+            if ($pw) { $GhToken = $pw.ToString().Substring(9) }
+        } catch {
+        } finally {
+            Remove-Item Env:\GCM_INTERACTIVE -ErrorAction SilentlyContinue
+        }
+    }
     if ($GhToken) {
         $h = @{ Authorization = "Bearer $GhToken"; 'User-Agent' = 'web-reverse-restore'; 'X-GitHub-Api-Version' = '2022-11-28' }
         $rel = Invoke-RestMethod -Headers $h -Uri "https://api.github.com/repos/$GhRepo/releases/latest"
@@ -78,6 +96,38 @@ function Get-Zip([string]$name) {
     $local = Join-Path $RepoRoot "release-assets\$name"
     if (Test-Path $local) { return $local }
     return $null
+}
+
+# ── 0. Base toolchain (optional) ──────────────────────────────────────────────
+if ($InstallBase) {
+    Step "Install base toolchain"
+    $winget = Get-Command winget.exe -ErrorAction SilentlyContinue
+    if ($winget) {
+        if (-not (Get-Command git.exe -ErrorAction SilentlyContinue)) {
+            Write-Host "   installing Git..."
+            & $winget.Source install --id Git.Git -e --silent --accept-package-agreements --accept-source-agreements
+            if ($LASTEXITCODE -ne 0) { Warn "winget Git install exited $LASTEXITCODE" }
+        }
+        if (-not (Get-Command node.exe -ErrorAction SilentlyContinue)) {
+            Write-Host "   installing Node.js LTS..."
+            & $winget.Source install --id OpenJS.NodeJS.LTS -e --silent --accept-package-agreements --accept-source-agreements
+            if ($LASTEXITCODE -ne 0) { Warn "winget Node install exited $LASTEXITCODE" }
+        }
+        $hasPy = (Get-Command python.exe -ErrorAction SilentlyContinue) -or (Get-Command py.exe -ErrorAction SilentlyContinue)
+        if (-not $hasPy) {
+            Write-Host "   installing Python 3.13..."
+            & $winget.Source install --id Python.Python.3.13 -e --silent --accept-package-agreements --accept-source-agreements
+            if ($LASTEXITCODE -ne 0) { Warn "winget Python install exited $LASTEXITCODE" }
+        }
+    } else {
+        Warn "winget not found. Install Git, Python 3.13 and Node 22 manually, then re-run."
+    }
+    $env:Path = [Environment]::GetEnvironmentVariable('Path','Machine') + ';' + [Environment]::GetEnvironmentVariable('Path','User')
+    if (-not (Get-Command dsh -ErrorAction SilentlyContinue) -and (Get-Command npm -ErrorAction SilentlyContinue)) {
+        Write-Host "   installing DeepSeek Harness (dsh)..."
+        npm install -g @deepseek-ai/dsh
+    }
+    OK "base toolchain ready"
 }
 
 # ── 1. Python ────────────────────────────────────────────────────────────────
@@ -147,7 +197,7 @@ if (-not $SkipZips) {
             Extract-Zip $z (Join-Path $RepoRoot $names[$n])
             OK "$n extracted"
         } else {
-            Warn "zip not found: $n (supply -GhToken for the private repo, -ReleaseBaseUrl for public, or place it in release-assets\)"
+            Warn "zip not found: $n (log into GitHub via git clone, supply -GhToken / -ReleaseBaseUrl, or place it in release-assets\)"
         }
     }
 }
