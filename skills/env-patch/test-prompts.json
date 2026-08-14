@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "prompt": "我有 target.js 和 sign 入口，放到 Node.js 里跑报 navigator is not defined，帮我补环境跑通。",
+    "expected": "先声明目标层级，执行首次诊断、按 undefinedPaths 选 env 模块、循环补丁；runtime-only 只证明 Node.js 可运行，signer-valid 再做固定输入输出验证，只有 request-replay 目标才进入请求回放。"
+  },
+  {
+    "id": 2,
+    "prompt": "这个独立安全 SDK 加载后没有报错，但一直抓不到签名，可能要补环境。",
+    "expected": "优先检查 SDK init/setup 参数，说明静默跳过风险，再进入诊断和 hook 捕获验证。"
+  },
+  {
+    "id": 3,
+    "prompt": "还不知道 x-sign 是哪个函数生成的，先帮我找入口。",
+    "expected": "判断不是补环境阶段，转交 camoufox-js-reverse 做入口和调用链定位。"
+  }
+]

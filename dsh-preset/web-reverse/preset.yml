@@ -1,0 +1,2 @@
+name: 网站逆向
+description: 网站/小程序逆向专用 Agent：接入 chrome-devtools、camoufox、cloakbrowser、js-reverse、frx-director、miniapp 六个逆向 MCP 服务器，并挂载全套逆向 skills。

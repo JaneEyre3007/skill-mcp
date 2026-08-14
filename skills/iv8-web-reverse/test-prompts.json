@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "prompt": "用 Python + iv8 跑这个挑战页 JS 生成 cookie，再用 requests 请求接口，脚本要紧凑可运行。",
+    "expected": "选择 js-challenge 案例路线，创建 js_reverse_cache，生成紧凑主脚本和 utils，保持同 session 请求链路。"
+  },
+  {
+    "id": 2,
+    "prompt": "把 JD h5st 的 iv8 案例改成当前接口，请求参数写在代码顶部，跑真实请求。",
+    "expected": "读取最接近 bundled case，替换 URL/headers/params/cookie/分页常量，使用 iv8_silent/logger 输出规则。"
+  },
+  {
+    "id": 3,
+    "prompt": "这个站有 sign，但我还不知道入口在哪，先帮我定位。",
+    "expected": "识别为入口定位需求，转交 camoufox-js-reverse，而不是直接写 iv8 脚本。"
+  }
+]

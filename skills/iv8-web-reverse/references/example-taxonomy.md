@@ -1,0 +1,500 @@
+# Real Example Taxonomy
+
+The full case scripts are bundled under `references/cases/`, and reverse-process docs live under `references/reverse-process/`.
+
+Use these examples as patterns. Do not blindly copy a site script into a new target; replace constants, URLs, headers, cookies, params, entry calls, and pagination.
+
+Before reading a case script, open `references/reverse-process/index.md`. If the case has a matching `*-reverse-process.md`, read it first; otherwise read the case script directly.
+
+## Folder Layout
+
+```text
+references/cases/
+  signatures/
+    jd-h5st.py
+    nmpa-md5-cookie.py
+    pdd-anti-content.py
+    xhs-homefeed.py
+
+  js-challenges/
+    chinatax-ruishu.py
+    customs-ruishu.py
+    chng-ruishu-announcement.py
+    ouyeel-202-cookie-url.py
+    cqvip-journal-search.py
+
+  browser-tokens/
+    zhipin-stoken.py
+
+  network-hook-signing/
+    douyin-bdms.py
+
+  captcha/
+    tencent-tdc-slider.py
+
+  js_reverse_cache/
+    <site-slug>/
+      frozen case JS/HTML/sample assets for newly ingested cases
+
+```
+
+Reverse-process docs live under `references/reverse-process/`:
+
+```text
+references/reverse-process/
+  index.md
+
+  signatures/
+    jd-h5st-reverse-process.md
+    nmpa-md5-cookie-reverse-process.md
+    pdd-anti-content-reverse-process.md
+    xhs-homefeed-reverse-process.md
+
+  js-challenges/
+    chinatax-ruishu-reverse-process.md
+    customs-ruishu-reverse-process.md
+    chng-ruishu-announcement-reverse-process.md
+    ouyeel-202-cookie-url-reverse-process.md
+    cqvip-journal-search-reverse-process.md
+
+  browser-tokens/
+    zhipin-stoken-reverse-process.md
+
+  network-hook-signing/
+    douyin-bdms-reverse-process.md
+
+  captcha/
+    tencent-tdc-slider-reverse-process.md
+```
+
+Bundled frozen case JS/HTML assets:
+
+```text
+references/cases/js_reverse_cache/
+  js_security_v3_main.js
+  jd_index.html
+  bdms_1.0.1.19.js
+  <site-slug>/
+    challenge.html
+    runtime.js
+  zhipin-stoken/
+    challenge.html
+    zhipin_stoken.txt
+  xhs-homefeed/
+    signV2Init_function.json
+    xhs_header_sign.js
+    runtime_seed.sample.json
+```
+
+Newly ingested cases should place frozen assets under `references/cases/js_reverse_cache/<site-slug>/`. The existing flat files are historical bundled assets and do not need to be moved unless a cleanup is explicitly requested.
+
+## `signatures/`
+
+Use this folder when the core task is generating a request signature or combining a business sign with a JS challenge cookie.
+
+### `signatures/jd-h5st.py`
+
+- Original example label: `h5st.py`
+- Site: JD / Jingdong mobile, `m.jd.com`, API `api.m.jd.com/api`
+- Protection type: `h5st` request signature
+- Supporting assets: `references/cases/js_reverse_cache/js_security_v3_main.js`, `references/cases/js_reverse_cache/jd_index.html`
+- Key iv8 APIs: `iv8.JSContext`, `ctx.eval`, `ctx.eval(..., name=...)`, `document.documentElement.innerHTML`, `__iv8__.wrapNative`
+- Key patch: `MessageChannel` shim wrapped with `__iv8__.wrapNative`
+- JS entry pattern: `new window.ParamsSignMain({appId: "2088b"})._$sdnmd(...).h5st`
+- Python request pattern: compute body hash, attach `h5st` into params, request `https://api.m.jd.com/api`
+
+Workflow:
+
+1. Read saved JD HTML and signing JS.
+2. Create mobile JD-like `location` environment.
+3. Patch `MessageChannel`.
+4. Seed DOM with saved HTML.
+5. Eval signing bundle with a useful source name.
+6. Build API params and hash the body.
+7. Call `ParamsSignMain` in iv8 to get `h5st`.
+8. Send real request with Python HTTP client.
+
+Use this case for:
+
+- Known signing object/function exposed by a browser JS bundle.
+- `h5st`-like signatures that require DOM/window/timer APIs.
+- Scripts needing a small native-looking browser API patch.
+
+### `signatures/nmpa-md5-cookie.py`
+
+- Original example label: `药监局.py`
+- Site: National Medical Products Administration, `www.nmpa.gov.cn`
+- Protection type: business MD5 header sign plus challenge-page JS cookie when blocked
+- Key iv8 APIs: `iv8.JSContext`, `ctx.expose`, `__iv8__.page.load`, `document.cookie`
+- Python request pattern: sorted params, URL encoding, MD5 header `sign`, challenge retry
+
+Workflow:
+
+1. Build query params and timestamp.
+2. Compute deterministic MD5 sign in Python.
+3. Request API.
+4. If status is not `200`, parse challenge HTML.
+5. Extract `<script ... r='m' ... src='*.js'>`.
+6. Download challenge JS.
+7. Load `baseURL/html/headers/resources` snapshot into iv8.
+8. Read `document.cookie`.
+9. Retry API with cookies and original sign headers.
+
+Use this case for:
+
+- A site has a normal business sign plus separate JS challenge cookie.
+- The sign itself is simple enough to compute in Python, but the cookie needs browser JS.
+
+### `signatures/pdd-anti-content.py`
+
+- Source example: verified workspace reproduction for Pinduoduo PC category page, `www.pinduoduo.com/home/girlclothes/`
+- Site: Pinduoduo PC home category page, API `https://apiv2.pinduoduo.com/api/gindex/tf/query_tf_goods_info`
+- Protection type: `anti_content` query parameter generated by an obfuscated webpack module
+- Supporting assets: none bundled; current page HTML and webpack chunks are downloaded at runtime into the current workspace `js_reverse_cache/`
+- Key iv8 APIs: `iv8.JSContext`, `ctx.eval(..., name=...)`, `__iv8__.eventLoop.drainMicrotasks`, `__iv8__.eventLoop.drain`, `__iv8__.eventLoop.sleep`
+- JS entry pattern: capture webpack `__webpack_require__`, load module `fbeZ`, then call `new fbeZ({serverTime}).messagePackSync()`
+- Python request pattern: request `/api/server/_stm` in the same `requests.Session`, generate fresh `anti_content`, attach it to query params, then request the goods API.
+
+Workflow:
+
+1. Request the category page and save the HTML to runtime `js_reverse_cache/`.
+2. Extract current Next.js webpack script URLs from the page HTML.
+3. Download `subject.js`, `_app.js`, webpack runtime, and commons chunk into runtime `js_reverse_cache/`.
+4. Request `/api/server/_stm` to get the current server time seed.
+5. Create a PC browser-like iv8 environment with `location`, `navigator`, `screen`, and `window` fields.
+6. Eval the webpack chunks in iv8 with source names.
+7. Push a tiny capture chunk into `window.webpackJsonp` to expose `__webpack_require__`.
+8. Require module `fbeZ` and call `messagePackSync()` with `{serverTime}`.
+9. Drain promises/timers and read the returned `anti_content` string.
+10. Send the real goods API request with Python `requests` and print the full response.
+
+Use this case for:
+
+- Next.js or webpack sites where the signing code is already loaded as a module but not exposed globally.
+- Runtime signatures that need a server-time seed and a browser-like environment, but no page challenge cookie or XHR hook replay.
+- Cases where static script hashes change, so the script should rediscover and redownload current chunks from the live HTML.
+
+### `signatures/xhs-homefeed.py`
+
+- Source example: verified workspace reproduction for Xiaohongshu PC homefeed, `www.xiaohongshu.com/explore`
+- Site: Xiaohongshu / RED PC homefeed, API `https://edith.xiaohongshu.com/api/sns/web/v1/homefeed`
+- Protection type: request headers `X-s`, `X-t`, and `X-S-Common` generated by `signV2Init()` / `window.mnsv2` plus local browser seed data
+- Reverse process doc: `references/reverse-process/signatures/xhs-homefeed-reverse-process.md` (read this first)
+- Supporting assets: `references/cases/js_reverse_cache/xhs-homefeed/signV2Init_function.json`, `references/cases/js_reverse_cache/xhs-homefeed/xhs_header_sign.js`, `references/cases/js_reverse_cache/xhs-homefeed/runtime_seed.sample.json`
+- Key iv8 APIs: `iv8.JSContext`, `ctx.eval(..., name=...)`, `ctx.expose(..., "signInput")`, `ctx.eval(..., to_py=True)`
+- JS entry pattern: load frozen `signV2Init_function.json`, run `signV2Init()`, then call `generateHeaders(payload, seed)` around `window.mnsv2(...)`
+- Python request pattern: merge `runtime_seed` cookies/localStorage seeds with optional login cookies, JSON-serialize the POST body with compact separators, attach fresh signed headers per page, and send with one `requests.Session`.
+
+Workflow:
+
+1. Read `references/reverse-process/signatures/xhs-homefeed-reverse-process.md` first.
+2. Read the frozen `signV2Init_function.json` and compact header-sign helper JS.
+3. Read a browser-exported `runtime_seed` containing `a1` cookie and localStorage seeds such as `b1`, `dsllt`, `_dsl`, and `sc`.
+4. Create a PC browser-like iv8 environment with `location`, `navigator`, `screen`, `window`, and a minimal DOM/storage bootstrap.
+5. Eval `signV2Init()` so `window.mnsv2` is available in iv8.
+6. Build the homefeed POST body with stable field order and compact JSON serialization.
+7. Expose `{payload, seed}` into iv8 and call `generateHeaders(...)` to obtain `X-s`, `X-t`, and `X-S-Common`.
+8. Rebuild payload and signed headers inside each page loop before replaying the real POST request.
+9. Print the full response without saving response JSON.
+
+Use this case for:
+
+- Sites where a browser VM/runtime function returns request headers rather than a query signature.
+- Signatures that combine request body serialization with browser cookie/localStorage seed values.
+- Xiaohongshu-like PC API calls where `a1`, `b1`, `dsllt/_dsl`, and `window.mnsv2` must stay consistent for each request.
+
+## `js-challenges/`
+
+Use this folder for challenge pages, Ruishu-style two-stage cookies, XHR hook suffixes, and HTTP 202/412 replay.
+
+### `js-challenges/chinatax-ruishu.py`
+
+- Original example label: `税务.py`
+- Site: Chongqing tax site, `chongqing.chinatax.gov.cn:8888`
+- Protection type: Ruishu-style two-stage page JS, cookie seeding, XHR hook URL signing/suffixing
+- Key iv8 APIs: `ctx.expose`, `__iv8__.page.load`, `__iv8__.eventLoop.sleep`, `__iv8__.netLog.entries`
+- Replay pattern: read `cookieHeader`, fetch second page with cookie, trigger API XHR inside iv8, replay captured URL.
+
+Workflow:
+
+1. Request protected page.
+2. Extract first `r='m'` JS and load snapshot in iv8.
+3. Sleep logical time to let page JS emit cookie/network entry.
+4. Read first-stage `cookieHeader` from the last `netLog` entry.
+5. Request page again with that cookie.
+6. Extract second-stage `r='m'` JS and load second snapshot in the same context.
+7. Create target API XHR in iv8.
+8. Read final URL and cookie/header metadata from `netLog`.
+9. Send real POST request with Python.
+
+Use this case for:
+
+- Ruishu-like runtime suffix generated only when XHR is created in a real browser environment.
+- Two-phase cookie then XHR-hook flow.
+
+### `js-challenges/customs-ruishu.py`
+
+- Original example label: `海关.py`
+- Site: China Customs credit directory, `credit.customs.gov.cn`
+- Protection type: Ruishu-style two-stage cookie plus XHR hook URL/header signing
+- Key iv8 APIs: same as `chinatax-ruishu.py`
+- Replay pattern: replay final API request with captured URL, `entry['headers']`, and `cookieHeader`
+
+Differences from `chinatax-ruishu.py`:
+
+- Sends JSON body string for the protected API.
+- Merges captured `entry['headers']` into the final Python request.
+- Useful when the hook modifies both URL and headers.
+
+Use this case for:
+
+- XHR hook adds request headers as well as URL suffix.
+- Final replay must preserve body serialization exactly.
+
+### `js-challenges/chng-ruishu-announcement.py`
+
+- Source example: verified workspace reproduction for CHNG / 华能电子商务, `ec.chng.com.cn`
+- Site: Huaneng Electronic Commerce channel home purchase page, API `https://ec.chng.com.cn/scm-uiaoauth-web/s/business/uiaouth/queryAnnouncementByTitle`
+- Protection type: Ruishu-style HTTP `412` two-stage cookie plus XHR hook URL suffix `kbfJdf1e`
+- Reverse process doc: `references/reverse-process/js-challenges/chng-ruishu-announcement-reverse-process.md` (read this first)
+- Supporting assets: none bundled; current challenge HTML and Ruishu JS are downloaded at runtime into the current workspace `js_reverse_cache/`
+- Key iv8 APIs: `iv8.JSContext`, `ctx.expose`, `__iv8__.page.load`, `__iv8__.eventLoop.sleep`, `document.cookie`, `__iv8__.netLog.entries`
+- Replay pattern: generate `S6J51OuUjLieO/P` cookies, trigger the announcement JSON POST inside iv8, capture the rewritten `queryAnnouncementByTitle?kbfJdf1e=...` URL and cookie header, then replay with Python `requests`.
+
+Workflow:
+
+1. Build a `channel/home/?SlJfApAfmEBp=<timestamp>#/purchase?top=0` page URL.
+2. Request the page and receive a `412` Ruishu challenge with `S6J51OuUjLieO` and `$_ts` fields.
+3. Extract the external `r="m"` protection JS URL and download it in the same `requests.Session`.
+4. Load the challenge snapshot into iv8 via `__iv8__.page.load` and read `S6J51OuUjLieP` from `document.cookie` or `netLog`.
+5. Request the page again with the generated cookie, load the second Ruishu runtime into the same iv8 context, and ignore skipped Vue `type="module"` app scripts.
+6. Build the exact compact JSON body with `start`, `limit`, `type`, `search`, and `ifend`.
+7. Create the target `XMLHttpRequest` inside iv8 and read the matching `queryAnnouncementByTitle` entry from `netLog`.
+8. Replay the final POST request with captured URL, optional captured headers, current cookie header, and exact body bytes.
+9. Print the full JSON response without saving response JSON.
+
+Use this case for:
+
+- Ruishu sites where the business API suffix is generated only by an XHR hook after a two-stage challenge.
+- Announcement/list APIs whose pagination uses offset semantics such as `start=0,10,20...` rather than page numbers.
+- Cases where the SPA app JS is not required because the protection runtime alone can hook a manually created XHR.
+
+### `js-challenges/ouyeel-202-cookie-url.py`
+
+- Original example label: `欧冶.py`
+- Site: Ouyeel steel marketplace, `www.ouyeel.com`
+- Protection type: HTTP 202 challenge, dynamic cookie, dynamic URL suffix from XHR hook
+- Key iv8 APIs: `iv8.JSContext`, `ctx.eval`, `document.documentElement.innerHTML`, `window.dispatchEvent(new Event('load'))`, `__iv8__.netLog.entries`, `document.cookie`
+
+Workflow:
+
+1. POST business API.
+2. If response status is `202`, parse challenge HTML.
+3. Extract inline scripts marked `r='m'` and external JS.
+4. Seed DOM with `innerHTML`.
+5. Eval required inline script, external JS, and final inline script manually.
+6. Dispatch `load` event manually.
+7. Trigger target XHR inside iv8.
+8. Read suffixed URL from `netLog.entries[0]`.
+9. Read `document.cookie`.
+10. Replay real API request with cookies and captured URL.
+
+Use this case for:
+
+- Challenge page scripts must be manually executed in a specific order.
+- `page.load` is not used; the script intentionally uses `innerHTML` plus manual eval/load.
+
+### `js-challenges/cqvip-journal-search.py`
+
+- Source example: workspace reproduction for CQVIP / 中文期刊, `qikan.cqvip.com`
+- Site: CQVIP journal search, page `https://qikan.cqvip.com/Qikan/Search/Index?from=index`, API `https://qikan.cqvip.com/Search/SearchList`
+- Protection type: Ruishu-style HTTP `412` challenge page, dynamic `6HZbKHDjIEcgS/T` cookie, then real form POST replay
+- Supporting assets: none bundled; challenge HTML and protection JS are downloaded at runtime into the current workspace `js_reverse_cache/`
+- Key iv8 APIs: `iv8.JSContext`, `ctx.expose`, `__iv8__.page.load`, `__iv8__.eventLoop.sleep`, `document.cookie`, `__iv8__.netLog.entries`
+- Replay pattern: generate fresh S/T cookies in the same `requests.Session`, POST `searchParamModel` form payload to `Search/SearchList`, print the returned HTML fragment.
+
+Workflow:
+
+1. Request the search page and receive a `412` challenge plus `6HZbKHDjIEcgS`.
+2. Extract the `r='m'` protection JS URL and download it with the same session.
+3. Load `{baseURL, html, headers, resources}` into iv8 via `__iv8__.page.load`.
+4. Advance the event loop and read `document.cookie` or the last `netLog` cookie header.
+5. Merge `6HZbKHDjIEcgS/T` into the same session cookie jar.
+6. Build `searchParamModel` with `KEYWORD`, `PageNum`, and `PageSize`.
+7. POST the form body to `Search/SearchList` and print the full HTML response.
+8. If the business POST returns another challenge, refresh cookies once and retry.
+
+Use this case for:
+
+- Sites where the first page is a `412` challenge but the final business request does not need XHR suffix capture.
+- CQVIP-like HTML-fragment search APIs that require fresh challenge cookies before each page request.
+- Compact examples that keep `loguru` optional with a small `PrintLogger` fallback.
+
+## `browser-tokens/`
+
+Use this folder when an API response returns seed/challenge fields and browser JS computes a token/cookie.
+
+### `browser-tokens/zhipin-stoken.py`
+
+- Original example label: `zp_stoken.py`
+- Site: Boss Zhipin, `www.zhipin.com`
+- Protection type: `__zp_stoken__` cookie from `seed/name/ts`
+- Key iv8 APIs: `iv8.JSContext`, canvas fingerprint environment, `ctx.expose`, `__iv8__.page.load`, `ctx.eval`
+- JS entry pattern: `encodeURIComponent((new window.ABC).z(seed, ts))`
+- Validation note: overwrite stale `__zp_stoken__`, `__zp_sseed__`, `__zp_sname__`, and `__zp_sts__` cookies in the same `requests.Session` before retrying.
+
+Workflow:
+
+1. Request job list API.
+2. Detect challenge response `code=37`.
+3. Extract `seed`, `name`, and `ts` from JSON.
+4. Download `security-js/{name}.js`.
+5. Build `security-check.html?...` location environment.
+6. Set required canvas fingerprint fields in `environment` if the target depends on canvas.
+7. Load a small HTML page containing the security JS via `page.load` resources.
+8. Call `new window.ABC().z(seed, ts)`.
+9. Replace the session cookies by name and keep the same `requests.Session`.
+10. Retry the API.
+
+Use this case for:
+
+- Server returns a JS file name and seed/timestamp.
+- The browser runtime calculates a cookie/token rather than a request sign.
+
+Frozen assets:
+
+- `references/cases/js_reverse_cache/zhipin-stoken/challenge.html`.
+- `references/cases/js_reverse_cache/zhipin-stoken/zhipin_stoken.txt`.
+- The live `security-js/{name}.js` is still fetched at runtime in the case script.
+
+## `network-hook-signing/`
+
+Use this folder when the JS SDK hooks XHR/fetch and the useful output is the rewritten request URL or headers.
+
+### `network-hook-signing/douyin-bdms.py`
+
+- Original example label: `abogus.py`
+- Site: Douyin, `www.douyin.com`, API host `www-hj.douyin.com`
+- Protection type: ByteDance/Douyin BDMS runtime URL signing/rewriting, often associated with `a_bogus`-style params
+- Supporting asset: `references/cases/js_reverse_cache/bdms_1.0.1.19.js`
+- Key iv8 APIs: `iv8.JSContext`, `ctx.eval`, `__iv8__.wrapNative`, `__iv8__.netLog.entries`, `to_py=True`
+- Key patch: `MessageChannel` shim
+- Init pattern: `window.bdms.init({...})`
+
+Workflow:
+
+1. Load local BDMS JS.
+2. Create Douyin page-like `location` and `navigator` environment.
+3. Patch `MessageChannel`.
+4. Eval BDMS JS.
+5. Call `window.bdms.init(...)` with target paths.
+6. Create XHR for the protected API URL in iv8.
+7. Read final request URL from `__iv8__.netLog.entries`.
+8. Send real request with Python headers/cookies.
+
+Use this case for:
+
+- SDK mutates outgoing XHR/fetch rather than exposing a clean `sign()` function.
+- You only need the final rewritten URL/header/body metadata from `netLog`.
+
+## `captcha/`
+
+Use this folder for behavior collection and trusted input, not ordinary request signing.
+
+### `captcha/tencent-tdc-slider.py`
+
+- Original example label: `tdc.py`
+- Site/context: Tencent CAPTCHA service `turing.captcha.qcloud.com`, embedded from Kugou login
+- Protection type: slider CAPTCHA, Tencent TDC telemetry, POW, image matching
+- Key non-iv8 dependencies: `ddddocr` + `Pillow`（优先）, `opencv-python` + `numpy`（回退）, `urllib3`, `requests`
+- Image gap detection priority: `ddddocr.slide_match` → `cv2.matchTemplate` 回退
+- Key iv8 APIs: `iv8.JSContext`, `ctx.expose`, `ctx.eval`, `__iv8__.input.dispatchPointerEvent`, `__iv8__.input.dispatchMouseEvent`, `__iv8__.eventLoop.sleep`, `to_py=True`
+- JS telemetry pattern: `window.TDC.getData(true)`, `window.TDC.getInfo()`
+
+Workflow:
+
+1. Call CAPTCHA prehandle endpoint.
+2. Extract `sess`, `sid`, TDC JS path, POW prefix/hash, image URLs, slider config.
+3. Download background and sprite images.
+4. Use ddddocr（优先）or OpenCV（回退）to find gap position.
+5. Solve POW in Python.
+6. Build a drag trajectory.
+7. Load TDC JS in iv8.
+8. Expose trajectory with `ctx.expose(traj, "traj")`.
+9. Dispatch trusted pointer/mouse events through iv8.
+10. Sleep between motion points using logical time.
+11. Read `collect` and `eks` from TDC.
+12. Submit verification request with Python.
+
+Use this case for:
+
+- Trusted event simulation is required.
+- The target collects behavioral telemetry from real-looking events.
+
+## JS Assets
+
+### `references/cases/js_reverse_cache/js_security_v3_main.js`
+
+JD h5st signing bundle used by `signatures/jd-h5st.py`.
+
+### `references/cases/js_reverse_cache/jd_index.html`
+
+Saved JD mobile page DOM context used by `signatures/jd-h5st.py`.
+
+### `references/cases/js_reverse_cache/bdms_1.0.1.19.js`
+
+Douyin/ByteDance BDMS runtime used by `network-hook-signing/douyin-bdms.py`.
+
+### `references/cases/js_reverse_cache/xhs-homefeed/`
+
+Frozen Xiaohongshu homefeed signing assets used by `signatures/xhs-homefeed.py`: `signV2Init_function.json` contains the captured `signV2Init()` source, `xhs_header_sign.js` wraps the header generation call around `window.mnsv2`, and `runtime_seed.sample.json` shows the expected browser seed shape without account cookies.
+
+### `references/cases/js_reverse_cache/zhipin-stoken/`
+
+Frozen Boss Zhipin stoken reproduction samples used by `browser-tokens/zhipin-stoken.py`: `challenge.html` records the minimal security-check HTML shape and `zhipin_stoken.txt` records a verified iv8-generated token sample. The case still downloads the current live `security-js/{name}.js` at runtime because the server returns `name` with each challenge.
+
+## Choosing A Case
+
+- Known exported JS function returns sign/header/token: start from `signatures/jd-h5st.py`.
+- Business sign is Python-simple but page challenge cookie is needed: start from `signatures/nmpa-md5-cookie.py`.
+- Webpack/Next.js module returns a query sign after requiring an internal module: start from `signatures/pdd-anti-content.py`.
+- Browser VM/runtime returns signed request headers from payload plus cookie/localStorage seeds: start from `signatures/xhs-homefeed.py`.
+- When using `signatures/xhs-homefeed.py`, read `references/reverse-process/signatures/xhs-homefeed-reverse-process.md` first.
+- First request returns challenge HTML and cookie must be generated by page JS: start from `js-challenges/*`.
+- Need two-stage cookie then XHR suffix capture: start from `chinatax-ruishu.py` or `customs-ruishu.py`.
+- Need CHNG/Huaneng announcement JSON POST with `kbfJdf1e` suffix and offset pagination: start from `js-challenges/chng-ruishu-announcement.py`.
+- Need one-stage 412 cookie then form POST replay without XHR suffix: start from `js-challenges/cqvip-journal-search.py`.
+- Server returns seed/name/ts and JS computes a cookie: start from `browser-tokens/zhipin-stoken.py`.
+- SDK hooks XHR/fetch and rewrites URL: start from `network-hook-signing/douyin-bdms.py`.
+- Behavior/captcha telemetry requires trusted mouse/pointer events: start from `captcha/tencent-tdc-slider.py`.
+- User explicitly asks to add the completed reproduction as a bundled case: read `references/case-ingestion-rules.md`, then add the verified script and only minimal frozen assets. Keep raw values by default; sanitize only on explicit request.
+
+## Adding A New Bundled Case
+
+Only add to `references/cases/` when the user explicitly asks to backfill, persist, or add the completed iv8 reproduction as a skill case. Ordinary generated target scripts and live downloaded materials stay in the current workspace `js_reverse_cache/`.
+
+Use `references/case-ingestion-rules.md` as the checklist. In short:
+
+- Verify the compact workspace script first.
+- Pick the closest category folder.
+- Copy a verified minimal script to `references/cases/<category>/<site-slug>.py`; keep raw values by default and sanitize only on explicit request.
+- Copy only required frozen JS/HTML/sample assets to `references/cases/js_reverse_cache/<site-slug>/`.
+- Update this taxonomy with the case summary, supporting assets, key iv8 APIs, workflow, and selection rule.
+- Do not add bulky response JSON, run reports, HAR files, or one-off debug dumps unless explicitly requested. Raw cookies/tokens/headers are kept by default for this user's private workflow; sanitize only on explicit request.
+
+## What To Preserve When Adapting
+
+- Environment fields that the target JS reads: `location`, `navigator`, `screen`, `canvas`, `window`.
+- Request serialization: form body vs JSON string vs query string.
+- Header names and casing when the target checks them.
+- Cookie source: `document.cookie`, session cookies, or `netLog.entries[-1].cookieHeader`.
+- Event loop advancement after page load, XHR, timers, promises, or input events.
+- `MessageChannel` or other patches only if the chosen case needs them.
+
+## What To Remove When Adapting
+
+- Hard-coded site URLs unrelated to the current target.
+- Huge fingerprint blobs unless the current target genuinely needs them.
+- Debug prints that hide full responses.
+- File saving unless the user asked for artifacts or the workflow saves protection JS / temporary runtime materials under the current workspace `js_reverse_cache/`.
+- CLI arguments unless requested.

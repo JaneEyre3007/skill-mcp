@@ -1,0 +1,71 @@
+{
+  "skill_name": "iv8-web-reverse",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "用 Python + iv8 跑京东 h5st，页码、pageSize、UA 都写在代码顶部，PyCharm 直接运行后 requests 请求接口并打印完整响应。",
+      "expected_output": "应生成紧凑 Python 主脚本和 utils helper，参考 jd-h5st 案例，顶部保留可编辑常量，动态素材写入 js_reverse_cache，并至少执行 py_compile。",
+      "files": [],
+      "expectations": [
+        "The response uses Python with iv8 and requests or curl_cffi.requests for a real HTTP request",
+        "The response creates or references utils/iv8_silent.py and utils/logger.py unless the user explicitly requests a single file",
+        "The response keeps editable constants such as PAGE_SIZE, START_PAGE, UA, PAGE_URL, or API_URL at the top of the script",
+        "The response stores downloaded or generated runtime materials under the workspace js_reverse_cache directory"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "API 先返回 seed/name/ts，需要参考 zhipin-stoken.py 用 iv8 算 __zp_stoken__ cookie，再用同一个 requests.Session 重试接口。",
+      "expected_output": "应选择 browser-token/challenge-token 路线，保持同一 Session，iv8 计算 token/cookie 后回写 cookie jar 并重试真实请求。",
+      "files": [],
+      "expectations": [
+        "The response selects the bundled zhipin-stoken style case or equivalent browser-token route",
+        "The response keeps cookie, token, timestamp, and retry request in the same requests.Session",
+        "The response does not switch to Node.js env-patch or plain entry tracing as the main solution"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "瑞数后缀请求已经确认要走 iv8，帮我触发页面里的 XHR，从 iv8 netLog 取最终 URL、headers、cookieHeader 后用 requests 重放。",
+      "expected_output": "应选择 Ruishu-style XHR suffix capture 路线，参考 chinatax/customs 案例，在 iv8 内触发 XHR，读取 netLog 后 Python 重放。",
+      "files": [],
+      "expectations": [
+        "The response treats this as an iv8 runtime reproduction, not rs-reverse fixed scaffold work",
+        "The response reads final URL, headers, cookieHeader, or body metadata from iv8 netLog",
+        "The response replays the captured request with Python requests or curl_cffi.requests"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "普通接口 403，还不知道是什么防护。先帮我找 x-sign 入口和调用链，不要写 iv8 脚本。",
+      "expected_output": "不应触发 iv8-web-reverse 主流程，应转 camoufox-js-reverse 做入口定位或路线判断。",
+      "files": [],
+      "expectations": [
+        "The response does not create a Python iv8 script before the deliverable is confirmed",
+        "The response hands off to camoufox-js-reverse or states that entry/location work should happen first"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "把这段依赖 window/document/navigator 的 JS 放到 Node VM 里补环境跑通，入口函数已经知道，不要 iv8。",
+      "expected_output": "不应触发 iv8-web-reverse，应转 env-patch，因为交付目标是 Node.js/VM 补环境。",
+      "files": [],
+      "expectations": [
+        "The response does not use iv8 as the main runtime",
+        "The response identifies this as Node.js or VM environment patching",
+        "The response hands off to env-patch or follows its run-diagnose-patch-verify loop"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "这次 iv8 复现已经跑通了，帮我把脚本脱敏后回写成 skill 里的 bundled case，素材放到 references/cases/js_reverse_cache/<site-slug>/。",
+      "expected_output": "应进入案例回写模式，读取 case-ingestion-rules，只复制脱敏后的最小脚本和 frozen 素材，更新 taxonomy，不保存账号 Cookie 或完整响应。",
+      "files": [],
+      "expectations": [
+        "The response recognizes explicit bundled-case backfill mode",
+        "The response follows case-ingestion-rules and writes frozen assets under references/cases/js_reverse_cache/<site-slug>/",
+        "The response excludes credentials, personal tokens, full business responses, and one-off capture artifacts"
+      ]
+    }
+  ]
+}

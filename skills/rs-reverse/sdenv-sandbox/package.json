@@ -1,0 +1,14 @@
+{
+  "name": "ruishu-sdenv-sandbox",
+  "version": "1.0.0",
+  "description": "瑞数反爬绕过客户端 — 基于 sdenv 自动生成 Cookie + URL 后缀",
+  "main": "sdenv-client.js",
+  "scripts": {
+    "start": "node sdenv-client.js",
+    "test": "node sdenv-client.js"
+  },
+  "dependencies": {
+    "sdenv": "^1.1.3",
+    "sdenv-ng": "^0.2.0"
+  }
+}

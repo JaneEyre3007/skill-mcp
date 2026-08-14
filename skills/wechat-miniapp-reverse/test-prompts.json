@@ -1,0 +1,27 @@
+[
+  {
+    "id": 1,
+    "prompt": "帮我分析 PC 微信小程序里点击登录后发出的请求，找到 sign 参数在哪里生成。",
+    "expected": "触发 wechat-miniapp-reverse；先确认 WMPFDebugger 调试服务，等待用户打开目标小程序后枚举 target；抓请求时优先查 preserved 历史和用户关键词，再用 initiator、源码搜索和断点定位 sign 入口。"
+  },
+  {
+    "id": 2,
+    "prompt": "微信小程序目标打开了，但 127.0.0.1:62000 连不上，帮我继续。",
+    "expected": "触发 wechat-miniapp-reverse；优先用 start-wmpf-debugger.cmd 复用 local.config.json 里的 WMPFDebugger 根目录，缓存无效时再快速定位或询问用户，不检查或安装依赖，并提示用户重新打开目标小程序。"
+  },
+  {
+    "id": 3,
+    "prompt": "这个普通 H5 页面接口有 X-Bogus，帮我还原成 Python 请求。",
+    "expected": "不触发或立即转交；应转给 camoufox-js-reverse 或 web-protocol-recovery，而不是使用 miniapp-reverse-mcp。"
+  },
+  {
+    "id": 4,
+    "prompt": "list_targets 里同时有 AppService 和两个 WebView，我要找登录 sign，下一步怎么选？",
+    "expected": "触发 wechat-miniapp-reverse；不要盲目频繁切 target，应先根据请求位置和用户动作确认 AppService/WebView，必要时给 DevTools URL 让用户确认当前页面，再选择目标。"
+  },
+  {
+    "id": 5,
+    "prompt": "刚才 XHR 断点命中了还停着，CPU profile 也开过，现在已经拿到签名入口，准备结束。",
+    "expected": "触发 wechat-miniapp-reverse 的资源释放；先 resume paused execution，盘点并清理 XHR/代码断点，停止 profiler/coverage 相关采集，若 WMPFDebugger 是本轮启动且任务结束则停止 62000。"
+  }
+]

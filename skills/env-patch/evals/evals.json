@@ -1,0 +1,51 @@
+{
+  "skill_name": "env-patch",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "入口已经找到了：window.sdk.sign(data) 在 static/sdk.js 里，运行时会读 window、document.cookie、navigator.userAgent。帮我把它补环境后放到 Node.js 里独立跑起来。",
+      "expected_output": "应先确认入口已知，默认使用 vm-browser-gap-diagnose.js + env 模块树诊断缺口；如果需要 native 伪装或长期维护 run.js，再启用 advanced-env-engine.js 高级路径。临时文件写入执行代码工作区的 js_reverse_cache/。",
+      "files": [],
+      "expectations": [
+        "The response treats this as an env-patch task because the entry is known",
+        "The response starts with vm-browser-gap-diagnose.js or explains when to use advanced-env-engine.js",
+        "The response keeps temporary artifacts under the execution workspace cache directory",
+        "The response validates signature format before request replay"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "我已经提取出 webpack 模块 1842，导出函数 makeSign(params)。模块 require 的瞬间会读 location.href 和 performance.now。帮我做 Node 运行方案。",
+      "expected_output": "应强调加载顺序，先补 location/performance 等全局，再加载目标模块；可使用 webpack-module-runtime.js，但不能在入口未知时盲目提取。",
+      "files": [],
+      "expectations": [
+        "The response recognizes a known webpack-module entry",
+        "The response mentions webpack-module-runtime.js or equivalent minimal runtime",
+        "The response installs environment patches before requiring the target module",
+        "The response does not modify the original source bundle"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "本地 env 模块已经能让脚本加载成功了，但 sign 返回长度和浏览器不一致。我想用 native 伪装和定向监控只看 navigator、document.createElement，不要再全量堆对象。",
+      "expected_output": "应启用 advanced-env-engine.js 高级路径或定向 monitor/wrapFunc，围绕 first divergence 收敛，不应继续批量添加大对象。",
+      "files": [],
+      "expectations": [
+        "The response recognizes that success true is not functional success",
+        "The response chooses targeted monitoring or advanced-env-engine.js for native-shape needs",
+        "The response patches only the minimal causal unit per round",
+        "The response blocks premature Python/execjs migration"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "我只知道请求头里有 x-sign，不知道哪个函数生成。直接帮我补 window/document/navigator，把整站 JS 扔 Node 跑。",
+      "expected_output": "不应直接进入补环境主流程，应先识别入口未知，转入口定位或先做最小取证。",
+      "files": [],
+      "expectations": [
+        "The response does not start a full Node.js environment patch before the entry is known",
+        "The response hands off to camoufox-js-reverse or asks to locate the entry first"
+      ]
+    }
+  ]
+}

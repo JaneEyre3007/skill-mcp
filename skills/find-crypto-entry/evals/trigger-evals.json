@@ -1,0 +1,50 @@
+[
+  {
+    "query": "请求头里的 x-sign 到底是在哪个函数里塞进去的，帮我找入口位置和调用链",
+    "should_trigger": true
+  },
+  {
+    "query": "这个参数 sign 是怎么生成的，我不要补环境，先帮我定位脚本和函数",
+    "should_trigger": true
+  },
+  {
+    "query": "帮我找 Authorization 这个值是谁算出来的，最好告诉我 request 到 encrypt 的路径",
+    "should_trigger": true
+  },
+  {
+    "query": "不要给我 hook 脚本，我只想知道 x-sign 是在哪个脚本、哪个函数里一路算出来的",
+    "should_trigger": true
+  },
+  {
+    "query": "浏览器里请求能发出去，但我只想知道 /api/order/create 这个请求上的 sign 是在哪个 bundle、哪条调用链里生成的",
+    "should_trigger": true
+  },
+  {
+    "query": "我怀疑是 axios interceptor 统一加签，帮我找从 request config 到最终 encrypt 的路径，不要给 console hook",
+    "should_trigger": true
+  },
+  {
+    "query": "给我一个 localStorage 的 hook 脚本，我想知道 token 是谁写进去的",
+    "should_trigger": false
+  },
+  {
+    "query": "我已经知道要盯 fetch 了，给我一段 devtools 里直接粘贴的脚本，看看是谁塞了 x-gnarly",
+    "should_trigger": false
+  },
+  {
+    "query": "把浏览器里的加密模块独立出来放到 node 里跑，需要补 window 环境",
+    "should_trigger": false
+  },
+  {
+    "query": "入口已经找到了，现在帮我补 window/document 环境把它放到 node 里跑",
+    "should_trigger": false
+  },
+  {
+    "query": "首页先 412 再 200，我更想把 challenge 里的动态 js 搬到 node 里跑生成 cookie，不是单纯找函数位置",
+    "should_trigger": false
+  },
+  {
+    "query": "这个大文件里全是 _0x 变量和字符串数组，帮我整体解混淆",
+    "should_trigger": false
+  }
+]

@@ -1,0 +1,62 @@
+[
+  {
+    "query": "这个 js 文件里全是 _0x 开头的变量，还有一个大字符串数组和 while(true){switch}，帮我尽量还原成能读的代码",
+    "should_trigger": true
+  },
+  {
+    "query": "我从网站里扣下来一段 sojson 混淆代码，想用 babel ast 分步处理，保留中间产物和最终还原结果",
+    "should_trigger": true
+  },
+  {
+    "query": "这个 bundle 里混淆很重，先别讲原理，直接帮我写脚本把控制流和平坦化拆开",
+    "should_trigger": true
+  },
+  {
+    "query": "按 Decode_action 那种插件式思路帮我拆这个 awsc 混淆，先把三元、逗号表达式和逻辑表达式整理成正常 if/switch",
+    "should_trigger": true
+  },
+  {
+    "query": "这段 sojsonv7 代码前面像是字符串数组和解密函数，帮我按家族先选 pipeline，再落地 AST 脚本",
+    "should_trigger": true
+  },
+  {
+    "query": "我手上这个 bundle 不是要临时断点，我是要做阅读版解混淆，最好保留 step1 step2 这种中间产物，方便我继续人工看",
+    "should_trigger": true
+  },
+  {
+    "query": "这段 obfuscator 代码里 while-switch 和 dispatcher object 很重，帮我按 pass 拆 visitor，不要只讲思路",
+    "should_trigger": true
+  },
+  {
+    "query": "给我一个浏览器里 hook document.cookie 的脚本，我想看是谁写了 cookie",
+    "should_trigger": false
+  },
+  {
+    "query": "帮我找 sign 参数是哪个函数算出来的，我要调用链和脚本位置",
+    "should_trigger": false
+  },
+  {
+    "query": "把这段浏览器加密代码补 window 和 document 后放到 node 里跑",
+    "should_trigger": false
+  },
+  {
+    "query": "我知道 sign 参数不对了，帮我找它在请求发出前是哪几个函数一路算出来的",
+    "should_trigger": false
+  },
+  {
+    "query": "入口函数我已经拿到了，现在别解混淆整份 bundle，直接做 node 侧最小补环境执行它",
+    "should_trigger": false
+  },
+  {
+    "query": "我不需要阅读版源码，只想知道 x-sign 是哪个脚本哪个函数生成的，最好带调用链",
+    "should_trigger": false
+  },
+  {
+    "query": "我已经能在浏览器里断到目标请求了，现在只想要一段 hook 脚本看看是谁写了 header，不是要解混淆整份 bundle",
+    "should_trigger": false
+  },
+  {
+    "query": "这个瑞数 r2mKa/mainjs 很混淆，但我现在要先判断 Cookie 算法链和运行态消费关系，不是只做源码级 AST pass",
+    "should_trigger": false
+  }
+]

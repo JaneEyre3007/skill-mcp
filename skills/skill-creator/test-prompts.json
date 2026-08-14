@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "prompt": "把这个日常工作流做成一个 OpenCode skill，要求触发准确，还要有 eval。",
+    "expected": "捕获意图、检查邻近 skill、撰写 SKILL.md、添加 eval prompts，并说明测试与包装流程。"
+  },
+  {
+    "id": 2,
+    "prompt": "帮我优化这个 skill 的 description，减少和 env-patch、browser-hook-snippets 的重叠。",
+    "expected": "做触发边界审查，生成 should-trigger/near-miss eval，收紧 description 和交接规则。"
+  },
+  {
+    "id": 3,
+    "prompt": "帮我改 opencode.json，添加一个 MCP server。",
+    "expected": "识别为 opencode 配置任务，转交 customize-opencode，而不是 skill-creator。"
+  }
+]

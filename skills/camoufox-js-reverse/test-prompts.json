@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "prompt": "帮我定位这个 H5 接口的 X-Bogus 是哪个脚本和函数生成的，最好给调用链和关键中间值。",
+    "expected": "触发 camoufox-js-reverse；先过零级闸门和 Checklist，再用 Camoufox/辅助 CDP 证据定位请求、initiator、脚本 URL、函数入口和中间值，不直接写最终协议采集器。"
+  },
+  {
+    "id": 2,
+    "prompt": "这个站加载了 JSVMP，签名像是跟 navigator、screen、canvas 有关，帮我判断哪些环境值真的参与签名。",
+    "expected": "触发 camoufox-js-reverse；以 Camoufox 指纹基准和属性访问/Hook/插桩证据确认环境读取，区分参与服务端校验的最小环境项和噪声项。"
+  },
+  {
+    "id": 3,
+    "prompt": "我已经有真实请求、签名公式和固定输入输出了，帮我写 Python 采集器。",
+    "expected": "识别为已有上游证据的协议实现任务，转交 web-protocol-recovery 证据复用快路径，而不是重复启动 Camoufox 侦察。"
+  }
+]

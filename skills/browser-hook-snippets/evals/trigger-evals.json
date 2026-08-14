@@ -1,0 +1,98 @@
+[
+  {
+    "query": "给我一个 Chrome DevTools 里能直接粘贴的 hook 脚本，我想看是谁往 localStorage 里写 token",
+    "should_trigger": true
+  },
+  {
+    "query": "帮我盯住 fetch，只有 url 里包含 /api/order/submit 的时候才打印参数并断点",
+    "should_trigger": true
+  },
+  {
+    "query": "页面里疑似用 worker 和 crypto.subtle 算签名，先给我一套浏览器里临时打点的 hook",
+    "should_trigger": true
+  },
+  {
+    "query": "我已经知道要盯 x-sign 这个 header 了，不要给调用链分析，直接给我一段能贴到 DevTools 里观察是谁写它的脚本",
+    "should_trigger": true
+  },
+  {
+    "query": "我不关心它在哪个文件里，先给我一个在 Sources 里首个脚本暂停后注入的 hook，看看是谁给 cookie 补了 acw_tc",
+    "should_trigger": true
+  },
+  {
+    "query": "这个瑞数站有 $_ts.cd、r2mKa 和 Cookie S/T，帮我分析二跳消费和 Cookie T 生成链路，不只是给 hook 脚本",
+    "should_trigger": false
+  },
+  {
+    "query": "这个页面可能既走 xhr 又走 fetch，给我一组临时观察脚本，只在 /web/report 和 /api/item/detail 命中时打印 header 和栈",
+    "should_trigger": true
+  },
+  {
+    "query": "这个 sign 参数到底在哪个函数里生成，我要函数位置和调用链",
+    "should_trigger": false
+  },
+  {
+    "query": "我主要想利用浏览器 DevTools 找到关键的 JS 加解密代码，给我脚本 URL、函数位置和调用链",
+    "should_trigger": false
+  },
+  {
+    "query": "接口返回的是密文，页面里会解密成明文。帮我用浏览器断点定位第一次解密的 JS 函数在哪里",
+    "should_trigger": false
+  },
+  {
+    "query": "页面里可能用了 crypto.subtle 或 CryptoJS，帮我找具体哪个 chunk 里的加密函数被调用，不是只要 hook 脚本",
+    "should_trigger": false
+  },
+  {
+    "query": "帮我看看 x-sign 从哪来的，最好最后能定位到函数位置和调用路径，不只是临时打印日志",
+    "should_trigger": false
+  },
+  {
+    "query": "我想断到写 header 的地方，但目标是知道哪个 bundle 哪个函数生成了 x-sign",
+    "should_trigger": false
+  },
+  {
+    "query": "先观察一下谁写了 x-sign header，给我一段最小 hook，后面再看要不要追调用链",
+    "should_trigger": true
+  },
+  {
+    "query": "我想知道 x-sign 是哪个 bundle 里的哪个函数生成的，不要 hook 脚本，直接给我位置和调用路径",
+    "should_trigger": false
+  },
+  {
+    "query": "把这段依赖 document 和 navigator 的代码补环境后放到 node 里跑",
+    "should_trigger": false
+  },
+  {
+    "query": "入口函数我已经知道了，下一步直接帮我补 window 环境，不用再给浏览器里的 hook 方案",
+    "should_trigger": false
+  },
+  {
+    "query": "帮我确认 x-sign 是哪个 bundle 里的第几个函数生成的，最好带行列号，我不是要断点脚本",
+    "should_trigger": false
+  },
+  {
+    "query":     "我有个 obfuscator 混淆文件，帮我用 babel ast 还原结构",
+    "should_trigger": false
+  },
+  {
+    "query": "暂时不需要知道函数名，先用 hook 看谁在写 header，范围缩小后再考虑要不要定位",
+    "should_trigger": true
+  },
+  {
+    "query": "用 hook 先采样两轮 API 请求的完整参数和 header，后续拿这些样本去补环境复现",
+    "should_trigger": true
+  },
+  {
+    "query": "帮我同时 hook XMLHttpRequest 和 fetch 的 open/send，只过滤 URL 包含 /api/ 的，输出 header 和 body 摘要",
+    "should_trigger": true
+  },
+  {
+    "query": "我是想找 x-sign 来源但还没确认要从哪里开始，先用一段轻量 hook 缩小嫌疑脚本范围再定位",
+    "should_trigger": true
+  },
+  {
+    "query": "我要代码级别的入口定位，不只要观察 hook，帮我找到生成函数和完整调用路径",
+    "should_trigger": false
+  }
+]

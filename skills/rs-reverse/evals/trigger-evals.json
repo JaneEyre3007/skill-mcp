@@ -1,0 +1,67 @@
+[
+  {
+    "query": "首页返回 412，HTML 里有 $_ts.cd、$_ts.nsd 和 r2mKa，帮我生成 Cookie T 后回放接口",
+    "should_trigger": true,
+    "reason": "明确瑞数 challenge 证据和 Cookie T 目标"
+  },
+  {
+    "query": "药监局接口需要 7QBHXKaZ 后缀，浏览器里能看到 Cookie S/T 和 basearr 线索，帮我本地复现",
+    "should_trigger": true,
+    "reason": "NMPA 瑞数后缀和 Cookie 链路"
+  },
+  {
+    "query": "瑞数 basearr type=2 映射不对，sdenv 采集值和纯算 Cookie T 对不上",
+    "should_trigger": true,
+    "reason": "瑞数 basearr 和 Cookie T 纯算适配"
+  },
+  {
+    "query": "meta[r=m] 外链 mainjs 里有 hasDebug，想分析 r2mKa 字节码和 session49",
+    "should_trigger": true,
+    "reason": "瑞数 mainjs/r2mKa/session49 研究"
+  },
+  {
+    "query": "这个站是瑞数 6，GET 接口普通 Cookie 过不了，需要用 JsRpc 或 runtime XHR.open 生成 suffix",
+    "should_trigger": true,
+    "reason": "Ruishu-specific JsRpc/runtime XHR suffix"
+  },
+  {
+    "query": "帮我定位这个 x-sign 参数是哪个函数生成的，给脚本 URL、函数名和调用链",
+    "should_trigger": false,
+    "expected_skill": "find-crypto-entry"
+  },
+  {
+    "query": "给我一段 Chrome Console 里 hook fetch 和 XHR header 的脚本，只观察 Authorization",
+    "should_trigger": false,
+    "expected_skill": "browser-hook-snippets"
+  },
+  {
+    "query": "这个是瑞数站，但我现在只要一段临时 DevTools hook 脚本看看谁写 document.cookie，不分析 Cookie T 链路",
+    "should_trigger": false,
+    "expected_skill": "browser-hook-snippets"
+  },
+  {
+    "query": "这个混淆文件是 obfuscator while-switch 和字符串数组，帮我结构化还原源码",
+    "should_trigger": false,
+    "expected_skill": "ast-deobfuscate"
+  },
+  {
+    "query": "入口函数已经找到了，把浏览器 JS 放到 Node.js 里补 window/document/navigator 跑通",
+    "should_trigger": false,
+    "expected_skill": "env-patch"
+  },
+  {
+    "query": "我想用 sdenv 跑一个普通浏览器 SDK，没有 $_ts、r2mKa、Cookie S/T 或瑞数线索",
+    "should_trigger": false,
+    "expected_skill": "env-patch"
+  },
+  {
+    "query": "普通 403，不确定是 Cloudflare 还是 Akamai，先帮我判断题型和检查点",
+    "should_trigger": false,
+    "expected_skill": "js-reverse-strategy"
+  },
+  {
+    "query": "用浏览器 RPC 调页面里的一个普通 encrypt 函数，不涉及瑞数 Cookie 或 URL 后缀",
+    "should_trigger": false,
+    "expected_skill": "find-crypto-entry"
+  }
+]

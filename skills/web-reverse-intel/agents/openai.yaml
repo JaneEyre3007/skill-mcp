@@ -1,0 +1,7 @@
+interface:
+  display_name: "Web Reverse Intel"
+  short_description: "Search prior web reverse-engineering cases"
+  default_prompt: "Use $web-reverse-intel to search prior reverse-engineering cases for this target site and summarize reusable evidence."
+
+policy:
+  allow_implicit_invocation: true

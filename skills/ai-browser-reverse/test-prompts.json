@@ -1,0 +1,5 @@
+[
+  {"id": 1, "prompt": "用 Firefox Reverse 帮我逆向 example.com 登录接口的 X-S 签名，委派模式跑", "expected": "识别 delegate 信号跳过模式提问 → frx_status 预检 → agent_start 带目标契约(URL/API/参数/输出) → wait/read/send 纠偏循环", "type": "should-trigger"},
+  {"id": 2, "prompt": "firefox-reverse-ai-mcp 直驱模式，帮我定位这个页面 sign 参数的生成函数", "expected": "direct-drive → frx_status → agent_tools 取真实工具名 → agent_call_tool 走 net_capture/net_get/initiator 黄金路径，一次一个工具", "type": "should-trigger"},
+  {"id": 3, "prompt": "用 Firefox Reverse 帮我调试一个微信小程序的下单接口", "expected": "识别为小程序任务与本 skill 不匹配，简述后 Full Handoff 到 wechat-miniapp-reverse，不强行启动 Firefox", "type": "near-miss"}
+]

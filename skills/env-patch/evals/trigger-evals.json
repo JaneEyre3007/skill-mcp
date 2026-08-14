@@ -1,0 +1,82 @@
+[
+  {
+    "query": "我已经扣下目标 JS 文件了，运行时报 window is not defined，帮我补环境让它在 Node.js 里跑通",
+    "should_trigger": true
+  },
+  {
+    "query": "入口函数已经定位，依赖 navigator、document 和 crypto，现在要在 VM 沙箱里复现 a_bogus",
+    "should_trigger": true
+  },
+  {
+    "query": "这个 JSVMP 文件本地执行缺少 canvas 和 performance，帮我诊断 undefinedPaths 并逐轮补环境",
+    "should_trigger": true
+  },
+  {
+    "query": "浏览器 SDK 已经知道 init 参数和触发方式，下一步把它封装成 Node 里的 sign.js",
+    "should_trigger": true
+  },
+  {
+    "query": "我已经从浏览器抓到入口函数和固定输入了，本地 VM 跑时报 document.createElement 缺失，帮我按诊断日志补最小 DOM 环境",
+    "should_trigger": true
+  },
+  {
+    "query": "现在不是找入口，入口文件和调用方式都确定了，目标是补 localStorage、TextEncoder、URLSearchParams 后让签名在 Node 里稳定输出",
+    "should_trigger": true
+  },
+  {
+    "query": "模块入口已经是 webpack 1842，想用最小 webpack runtime 和补好的 location/performance 在 Node 里 require 后调用 makeSign",
+    "should_trigger": true
+  },
+  {
+    "query": "这个瑞数站我明确要走更重的 Node VM / DOM 契约补环境，入口 runtime 已经扣下来了，不要固定项目骨架",
+    "should_trigger": true
+  },
+  {
+    "query": "我已有瑞数 $_ts 的 runner JS，目标是 Node.js 补环境跑通 a_bogus 签名，不是只要观察 cookie",
+    "should_trigger": true
+  },
+  {
+    "query": "瑞数 challenge 去重后还是报 window is not defined，继续帮我用 vm-browser-gap-diagnose.js 补环境",
+    "should_trigger": true
+  },
+  {
+    "query": "默认 env 模块能加载但签名长度和浏览器不一致，需要用 native toString 伪装和定向 monitor 找 first divergence",
+    "should_trigger": true
+  },
+  {
+    "query": "这个 sign 参数到底在哪个函数里生成，我要先找入口和调用链",
+    "should_trigger": false
+  },
+  {
+    "query": "给我一个 fetch/xhr hook 脚本，直接贴到 DevTools 观察 header",
+    "should_trigger": false
+  },
+  {
+    "query": "首页返回 412 且有 $_ts.cd、r2mKa、Cookie S/T，我想继续深挖瑞数字节码和算法链",
+    "should_trigger": false
+  },
+  {
+    "query": "瑞数本地 main.js 已能出 Cookie，但现在要深挖 hasDebug、时间随机和二跳消费关系，不是继续做 Node 补环境",
+    "should_trigger": false
+  },
+  {
+    "query": "这个 _0x 大文件我想先做 AST 解混淆，保留 step1/step2 中间产物",
+    "should_trigger": false
+  },
+  {
+    "query": "普通接口 403，不知道是什么防护，先用浏览器帮我定位关键 JS",
+    "should_trigger": false
+  },
+  {
+    "query": "rs-reverse 已经确认瑞数后缀请求失败，现在要用 Python + iv8 跑防护页和分页接口，不要 Node VM 补环境",
+    "should_trigger": false
+  },
+  {
+    "query": "首页 412 + meta[r=m] + Cookie S，帮我先生成固定瑞数项目结构和 proxy 模板，只要轻量观察",
+    "should_trigger": false
+  },
+  {
+    "query": "GeeTest/极验滑块验证码站点，不是瑞数，需要 Node 补环境跑通 js 生成 w 参数",
+    "should_trigger": true
+  }
+]

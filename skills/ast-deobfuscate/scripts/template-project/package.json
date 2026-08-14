@@ -1,0 +1,19 @@
+{
+  "name": "decode-action-template-project",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Directory-based AST deobfuscation template inspired by Decode_action-main",
+  "scripts": {
+    "decode": "node src/main.js -i input.js -o output.js",
+    "decode:input": "node src/main.js",
+    "metrics": "node src/tools/collect-residue-metrics.js output.js",
+    "compare": "node src/tools/compare-with-reference.js output.js reference.js",
+    "check": "node --check src/main.js && node --check src/lib/core.js && node --check src/plugins/common.js && node --check src/plugins/obfuscator.js && node --check src/plugins/sojson.js && node --check src/plugins/sojsonv7.js && node --check src/plugins/awsc.js && node --check src/tools/collect-residue-metrics.js && node --check src/tools/compare-with-reference.js"
+  },
+  "dependencies": {
+    "@babel/generator": "^7.27.0",
+    "@babel/parser": "^7.27.0",
+    "@babel/traverse": "^7.27.0",
+    "@babel/types": "^7.27.0"
+  }
+}

@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "prompt": "我已经抓到了列表接口的真实请求、headers、cookie 和响应样本，帮我写一个脱离浏览器的 Python 采集器。",
+    "expected": "触发 web-protocol-recovery；走证据复用快路径，确认 artifact、协议分类和交付形态，直接实现并验证 browser-free replay。"
+  },
+  {
+    "id": 2,
+    "prompt": "这个站请求里有签名、首跳 cookie、响应还要解密，最后要做成稳定的 Python 爬虫。",
+    "expected": "触发 web-protocol-recovery；按端到端协议链路恢复处理真实请求、动态状态、bootstrap、解码和最终 collector，不停在单点 hook 或入口定位。"
+  },
+  {
+    "id": 3,
+    "prompt": "我只想知道 x-sign 是哪个函数生成的，先给脚本 URL 和调用栈。",
+    "expected": "识别为单点入口定位需求，转交 camoufox-js-reverse，不进入完整协议恢复流程。"
+  }
+]

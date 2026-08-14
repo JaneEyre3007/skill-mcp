@@ -1,0 +1,31 @@
+{
+  "name": "frx-director-mcp",
+  "version": "0.2.0",
+  "private": true,
+  "description": "MCP server for the firefox-reverse browser Agent. Default: steer the cheap DeepSeek worker (AI-assist cost-split loop). Opt-in (0.2.0): drive the engine's 44 built-in tools directly via agent_call_tool (strong director, bypasses the worker). Never touches your API key.",
+  "type": "module",
+  "bin": {
+    "frx-director-mcp": "dist/index.js"
+  },
+  "exports": "./dist/index.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "vitest": "^3.2.6"
+  }
+}

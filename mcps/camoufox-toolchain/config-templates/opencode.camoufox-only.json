@@ -1,0 +1,20 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "shell": "cmd",
+  "skills": {
+    "paths": [
+      "C:\\PATH\\TO\\camoufox工具迁移\\opencode\\skills"
+    ]
+  },
+  "mcp": {
+    "camoufox-reverse-mcp": {
+      "type": "local",
+      "command": [
+        "cmd",
+        "/c",
+        "C:\\PATH\\TO\\camoufox工具迁移\\scripts\\launch-camoufox-reverse-mcp.bat"
+      ],
+      "enabled": true
+    }
+  }
+}

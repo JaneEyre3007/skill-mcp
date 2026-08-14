@@ -1,0 +1,12 @@
+node_modules/
+# (web-reverse-backup: keep dist/ tracked so the prebuilt MCP entry
+#  dist/index.js ships with the repo; restore needs no npm run build)
+# dist/
+*.log
+.env
+.env.local
+data/
+workspaces/
+*.ndjson
+.DS_Store
+coverage/

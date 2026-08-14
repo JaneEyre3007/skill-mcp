@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "prompt": "帮我解混淆 source/original/app.min.js，里面有 _0x 字符串数组和 while-switch 控制流，产出可读版源码。",
+    "expected": "识别混淆家族，设计 Babel AST 多轮 pass，生成原始/中间/最终输出路径，并说明残留结构。"
+  },
+  {
+    "id": 2,
+    "prompt": "参考 Decode_action 的插件式流程，把这个 sojsonv7 文件拆成可维护的解混淆 pipeline。",
+    "expected": "按家族路由到 sojsonv7 pipeline，拆 plugin/visitor/pass，保留中间产物和语法校验步骤。"
+  },
+  {
+    "id": 3,
+    "prompt": "我只想知道这个 x-sign 参数在哪生成，不需要还原整个文件。",
+    "expected": "明确不应使用 AST 解混淆主流程，转交入口定位或浏览器调试 skill。"
+  }
+]

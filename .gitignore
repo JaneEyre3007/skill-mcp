@@ -1,0 +1,15 @@
+release-assets/
+*.zip
+
+# Restore-time extraction targets (binaries come from GitHub Releases, not git)
+mcps/CloakBrowser/*
+!mcps/CloakBrowser/cloakbrowser-reverse-mcp/
+!mcps/CloakBrowser/cloakbrowser-reverse-mcp/**
+mcps/camoufox-toolchain/runtime/Camoufox/
+mcps/camoufox-toolchain/runtime/Camoufox-reverse/
+runtimes/WMPFDebugger/
+
+# regenerable / machine-local junk
+node_modules/
+__pycache__/
+*.pyc

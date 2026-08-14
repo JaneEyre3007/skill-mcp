@@ -1,0 +1,23 @@
+﻿# Evidence Card
+
+- Title:
+- URL or source:
+- Visible date:
+- Source class:
+- Evidence grade:
+- Source weight:
+- Technical similarity:
+- Reference value:
+- Confidence:
+- Positive confidence reasons:
+- Negative confidence reasons:
+- Freshness risk:
+- Direct reuse risk:
+- Target match:
+- Key nodes extracted:
+- Fingerprints extracted:
+- Conflicts or superseded claims:
+- Why it matters:
+- Why it may be stale:
+- Recommended priority:
+- Next validation step:

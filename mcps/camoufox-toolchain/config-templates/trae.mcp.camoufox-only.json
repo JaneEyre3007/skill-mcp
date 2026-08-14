@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "camoufox-reverse-mcp": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "C:\\PATH\\TO\\camoufox工具迁移\\scripts\\launch-camoufox-reverse-mcp.bat"
+      ]
+    }
+  }
+}

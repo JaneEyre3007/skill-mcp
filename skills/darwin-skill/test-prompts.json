@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "prompt": "优化所有 skill，按评分从低到高逐个改，改完要能回滚。",
+    "expected": "执行范围发现、git/回滚检查、测试 prompt 设计、基线评估、用户确认、逐个 hill-climbing 优化。"
+  },
+  {
+    "id": 2,
+    "prompt": "只评估这些 skill 的质量，不要改文件。",
+    "expected": "只做测试 prompt 设计和基线评分，记录 eval_mode，不进入优化循环。"
+  },
+  {
+    "id": 3,
+    "prompt": "看看历史上 skill 优化结果怎么样。",
+    "expected": "读取 results.tsv，汇总 baseline/keep/revert、分数变化、eval_mode 和主要风险。"
+  }
+]

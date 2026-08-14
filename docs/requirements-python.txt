@@ -1,0 +1,6 @@
+camoufox[geoip]==0.5.4
+cdp-use==1.4.5
+esprima==4.0.1
+mcp==1.29.0
+playwright==1.60.0
+setuptools==76.0.0

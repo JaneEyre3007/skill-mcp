@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "prompt": "给我一段能直接贴到 DevTools 的脚本，hook fetch 和 XHR，看哪个请求带了 Authorization header。",
+    "expected": "输出最小可粘贴 hook，绑定 method/url/header 字段和调用栈，说明注入位置、副作用和恢复方式。"
+  },
+  {
+    "id": 2,
+    "prompt": "临时观察是谁写了 document.cookie 里的 token，同时别刷屏，值可以截断。",
+    "expected": "提供 document.cookie setter 观察脚本，包含降噪、trace、Set-Cookie 限制说明和完整值开关。"
+  },
+  {
+    "id": 3,
+    "prompt": "帮我找到 a_bogus 是哪个函数生成的，最好给脚本 URL 和调用链。",
+    "expected": "判断目标是函数定位而非单点 hook snippet，转交 camoufox-js-reverse。"
+  }
+]

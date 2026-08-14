@@ -1,0 +1,123 @@
+{
+  "skill_name": "ast-deobfuscate",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "我刚扣下来一个混淆 js，不确定是 sojson 还是 obfuscator。不要先讲理论，先给我一个 Decode_action 风格的起手脚手架，让我能先跑出第一版结果，再告诉我下一步改哪个 visitor。",
+      "expected_output": "应优先使用单文件脚手架或目录模板起手，明确输出脚手架文件路径、运行方式、首个 plugin 判断思路，并说明下一步针对 visitor/plugin 的收敛方向。",
+      "files": [],
+      "expectations": [
+        "The response recommends either scripts/decode_action_scaffold.js or scripts/template-project/ as the starting point",
+        "The response includes a runnable command or explicit run path for the scaffold/template",
+        "The response mentions how to decide the next visitor or plugin refinement based on the first result"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "这段代码里有 _0x 前缀、大字符串数组、table['xx'](a,b) 还有 while(true){switch}，帮我直接按 obfuscator 家族落地目录版模板，优先处理 dispatcher object 和顺序表控制流。",
+      "expected_output": "应选择目录版 template-project 路线，强调 obfuscator pipeline，提到 merge-object、inline-dispatcher、while-switch-unpack，并给出可运行的入口方式。",
+      "files": [],
+      "expectations": [
+        "The response chooses the directory-based template-project path rather than only the single-file scaffold",
+        "The response explicitly mentions obfuscator-oriented visitors such as merge-object, inline-dispatcher, or while-switch-unpack",
+        "The response includes a direct execution path such as npm run decode or node src/main.js"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "我这份 sojsonv7 样本前面像是解密初始化函数，后面全是 _0x 调用。帮我用模板先恢复一版字符串，必要时只在最小 sandbox 里跑 bootstrap，不要直接全局 eval 整份脚本。",
+      "expected_output": "应选择 sojson/sojsonv7 方向，说明最小 bootstrap + 定点 decrypt restore 的做法，避免整份脚本执行，并指出后续可继续收紧 bootstrap 识别。",
+      "files": [],
+      "expectations": [
+        "The response selects the sojson or sojsonv7 route",
+        "The response mentions a minimal bootstrap or sandbox-based restore strategy",
+        "The response explicitly avoids globally executing the whole target script"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "给我一个浏览器里 hook document.cookie 和 fetch header 的脚本，我想看谁在写 token。",
+      "expected_output": "不应走 ast-deobfuscate，应转交 browser-hook-snippets。",
+      "files": [],
+      "expectations": [
+        "The response does not route this request into AST deobfuscation",
+        "The response redirects to browser-hook-snippets"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "帮我找请求头里的 x-sign 是哪个函数算出来的，我要脚本位置和调用链，不需要解混淆整文件。",
+      "expected_output": "不应走 ast-deobfuscate，应转交 camoufox-js-reverse。",
+      "files": [],
+      "expectations": [
+        "The response does not choose full-file AST deobfuscation",
+        "The response redirects to camoufox-js-reverse"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "我已经用单文件脚手架跑过一轮了，现在这个 obfuscator 样本 worth 继续投入。帮我升级到目录版模板，把 visitor 和 plugin 分开维护，后面我会继续加 pass。",
+      "expected_output": "应从单文件脚手架升级到 scripts/template-project/，说明为什么要拆到 src/plugins 和 src/visitors，并给出 npm 方式运行模板。",
+      "files": [],
+      "expectations": [
+        "The response recommends migrating from the single-file scaffold to scripts/template-project/",
+        "The response explains the split between src/plugins and src/visitors",
+        "The response includes npm install and npm run decode or equivalent execution guidance"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "这份 while-switch 不是静态顺序表，case 里会改 state 然后跳下一轮。不要硬还原错了，告诉我应该怎么处理。",
+      "expected_output": "应明确说明这类 state-driven 控制流不适合继续默认静态展开，建议转插桩并指出 instrumentation-patterns 的方向。",
+      "files": [],
+      "expectations": [
+        "The response explicitly warns against forcing static while-switch expansion for runtime state machines",
+        "The response recommends instrumentation or runtime observation",
+        "The response points toward instrumentation-patterns or an equivalent dynamic-tracing next step"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "我要给 template-project 新增一个 visitor，先帮我设计最小回归样例，别直接拿生产 bundle 当测试。",
+      "expected_output": "应建议在 template-project/test-fixtures 中放小型 fixture，覆盖目标 visitor 的正例和负例，并说明运行方式。",
+      "files": [],
+      "expectations": [
+        "The response recommends small focused fixtures rather than large production bundles",
+        "The response points to template-project/test-fixtures or an equivalent regression fixture location",
+        "The response includes a way to run the template project against the fixture"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "这段混淆 JS 里有很多看起来是空白但其实不是空白的字符，直接在编辑器看不到、AST parse 也报非法 token。帮我先做字符级清理，不要直接上 AST pass。",
+      "expected_output": "应识别为不可见 Unicode/零宽字符/BOM 载荷场景，先做字符级清理和可视化，不要直接绕过进入 AST 管道。",
+      "files": [],
+      "expectations": [
+        "The response detects or checks for invisible Unicode, zero-width characters, or BOM markers",
+        "The response recommends character-level cleanup and visualization before any AST pass",
+        "The response does not attempt to parse with Babel before the invisible character issue is resolved"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "这个 sojson 混淆文件是独立 SDK，我想还原后提取里面的签名函数放到 Python 里调。帮我先做解混淆，然后直接导出调用版。",
+      "expected_output": "应确认解混淆的定位，但不应在请求入口未确认的情况下跳转到补环境或端口迁移。如果用户明确要调用版输出，应先交阅读版、确认可运行后再补调用版。",
+      "files": [],
+      "expectations": [
+        "The response acknowledges the deobfuscation goal but does not skip to env-patch or port migration",
+        "If call-target output is requested, the response follows the read-then-call order",
+        "The response does not treat this as a pure env-patch or port task before deobfuscation is stable"
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "帮我找 /api/order 请求里的 x-sign 是哪个函数生成的，给我脚本位置和调用链。这个站点代码是混淆的但不深。",
+      "expected_output": "不应直接进入 AST 全量解混淆，应先走 camoufox-js-reverse 做入口定位；只有当入口函数位于深度混淆的 SDK 内且需要结构化还原时才转 ast-deobfuscate。",
+      "files": [],
+      "expectations": [
+        "The response does not route into full AST deobfuscation for a locate-style task",
+        "The response hands off to camoufox-js-reverse or states that entry location comes before deobfuscation"
+      ]
+    }
+  ]
+}

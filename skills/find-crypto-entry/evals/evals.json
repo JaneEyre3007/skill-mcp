@@ -1,0 +1,48 @@
+{
+  "skill_name": "find-crypto-entry",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "请求头里的 x-sign 到底是在哪个函数里塞进去的，帮我找入口位置和调用链，不要给我 hook 脚本。",
+      "expected_output": "应定位到脚本、函数、调用路径和入口类别，优先静态搜索，必要时说明动态断点验证方式。",
+      "files": [],
+      "expectations": [
+        "The response focuses on entry location and call chain rather than browser hook snippets",
+        "The response includes script/function/call-path fields or an equivalent completion template",
+        "The response distinguishes direct assignment, interceptor, SDK, or challenge branch"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "我怀疑 axios interceptor 统一给 /api/order/create 加 Authorization，帮我从 request config 追到最终 encrypt 的路径。",
+      "expected_output": "应选择请求拦截器路径，搜索 interceptor、headers、目标 API path 和加密函数，最终交付调用链。",
+      "files": [],
+      "expectations": [
+        "The response identifies this as an interceptor-style entry search",
+        "The response searches or recommends searching API path and request configuration in addition to the header name",
+        "The response does not switch to Node.js environment patching before the entry is found"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "首页先返回 412 challenge，页面里有 $_ts 和外链 js。我想生成动态 cookie 后回放接口。",
+      "expected_output": "应识别为 challenge/dynamic cookie 分支，不应按普通 sign 入口深追，应转 env-patch。",
+      "files": [],
+      "expectations": [
+        "The response identifies the challenge or dynamic-cookie branch",
+        "The response does not treat the task as a normal API sign parameter search",
+        "The response hands off to env-patch when the user wants protocol reproduction"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "给我一段 Chrome DevTools 里能直接粘贴的 fetch hook，只在 /api/login 的时候断下来。",
+      "expected_output": "不应走入口定位主流程，应转 browser-hook-snippets。",
+      "files": [],
+      "expectations": [
+        "The response does not perform source entry tracing as the main answer",
+        "The response redirects to browser-hook-snippets or states that a browser hook snippet is the right tool"
+      ]
+    }
+  ]
+}

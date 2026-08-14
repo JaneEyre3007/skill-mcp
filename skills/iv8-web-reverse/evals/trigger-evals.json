@@ -1,0 +1,82 @@
+[
+  {
+    "query": "用 Python + iv8 跑小红书 homefeed 的 signV2Init，生成 X-s 和 X-S-Common 后再用 requests 发真实 POST，脚本顶部把 PAGE_URL、API_URL、UA 写死。",
+    "should_trigger": true
+  },
+  {
+    "query": "这次不是找入口，已经知道要跑 iv8 了，帮我把 challenge 页里的 cookie JS 跑出来，再重放原接口。",
+    "should_trigger": true
+  },
+  {
+    "query": "参考 zhipin-stoken.py，用 iv8 读 seed/name/ts 算 __zp_stoken__，同一个 Session 里回填 cookie 再重试。",
+    "should_trigger": true
+  },
+  {
+    "query": "页面里的 BDMS 运行时会改写请求 URL，我要在 iv8 里 hook XHR，拿到最终 URL 和 headers 后用 Python 重放。",
+    "should_trigger": true
+  },
+  {
+    "query": "目标站是 412 challenge，cookie 要由页面 JS 生成，帮我按 iv8 + requests 的路线做一个可直接运行的脚本。",
+    "should_trigger": true
+  },
+  {
+    "query": "我要把已经跑通的 iv8 复现脱敏后回写到 skill，新增 bundled case 和对应 frozen JS。",
+    "should_trigger": true
+  },
+  {
+    "query": "请按京东 h5st 的思路，用 iv8 加载本地 JS bundle，计算签名后发真实请求。",
+    "should_trigger": true
+  },
+  {
+    "query": "这站会先返回 seed，再由浏览器 JS 生成 token 或 cookie，最终还是要 Python 发请求。",
+    "should_trigger": true
+  },
+  {
+    "query": "先别找入口，我已经确认要用 iv8 跑浏览器侧 JS 了，目标是生成动态 header/sign 并重放接口。",
+    "should_trigger": true
+  },
+  {
+    "query": "要做可信 mouse/pointer 事件采集 TDC 行为数据，最好按现有 iv8 案例写一个最小脚本。",
+    "should_trigger": true
+  },
+  {
+    "query": "帮我找这个参数在哪个 JS 函数里生成，先给脚本 URL 和调用链，不要写复现脚本。",
+    "should_trigger": false
+  },
+  {
+    "query": "页面有个 sign 但我只想知道入口函数名和源码位置，暂时不跑 iv8。",
+    "should_trigger": false
+  },
+  {
+    "query": "给我一段 DevTools snippet，临时 hook fetch/xhr/cookie 看是谁写了 token。",
+    "should_trigger": false
+  },
+  {
+    "query": "把这段 obfuscator/sojson 风格 JS 做 AST 解混淆，展开字符串数组和 while-switch。",
+    "should_trigger": false
+  },
+  {
+    "query": "这段代码放到 Node.js VM 里跑不起来，帮我补 window/document/navigator 环境。",
+    "should_trigger": false
+  },
+  {
+    "query": "普通 403 页面，先用浏览器找 crypto 入口和参数生成链路，不要做 iv8。",
+    "should_trigger": false
+  },
+  {
+    "query": "瑞数项目想先搭固定骨架和首跳材料缓存，别做 iv8 复现。",
+    "should_trigger": false
+  },
+  {
+    "query": "我只是在整理一个浏览器 hook 方案，不需要真正请求接口。",
+    "should_trigger": false
+  },
+  {
+    "query": "这个项目最终要写的是 Python iv8 脚本，不过我现在只想看页面 DOM 结构。",
+    "should_trigger": false
+  },
+  {
+    "query": "要分析的是一段被混淆的 JSVMP 代码，先做源码还原，不要进入运行复现。",
+    "should_trigger": false
+  }
+]

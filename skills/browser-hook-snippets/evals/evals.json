@@ -1,0 +1,137 @@
+{
+  "skill_name": "browser-hook-snippets",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "这个站点登录后会往 localStorage 里写一个 token，但我不知道是谁写的。给我一个能直接贴到 Chrome DevTools Console 的 hook 脚本，最好在 setItem 的时候断下来。",
+      "expected_output": "给出 localStorage hook 脚本，包含 setItem 观察和 debugger，说明注入位置与预期效果。",
+      "expectations": [
+        "应出现 localStorage 或 Storage.prototype 的 hook 方案",
+        "应保留对原始 setItem 的调用，不应阻断页面行为",
+        "应说明脚本适合贴到 DevTools Console 或等价位置"
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "我想盯住 fetch 请求，只有 URL 里包含 /api/order/submit 的时候才打印参数并断点，给我最小脚本。",
+      "expected_output": "给出带 URL 条件判断的 fetch hook，继续调用原始 fetch，并说明如何使用。",
+      "expectations": [
+        "应包含对 /api/order/submit 的条件判断",
+        "应继续调用原始 fetch",
+        "应给出最小可执行脚本，而不是泛泛说明"
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "某个页面会动态创建 canvas 做指纹，我想知道 canvas 是什么时候创建和导出的，给我一组适合在浏览器里临时打点的脚本。",
+      "expected_output": "优先给 createElement 或 canvas 相关 hook，必要时组合 toDataURL/getContext，并说明为何这些点有效。",
+      "expectations": [
+        "应优先选择 createElement、getContext 或 toDataURL 这类落点",
+        "允许给一组小脚本，但不应无关扩散到大量其它 hook",
+        "应解释为什么这些 hook 点能覆盖创建和导出阶段"
+      ],
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "这个站点把加密逻辑放在 worker 里跑，我想看 worker 是哪个脚本、postMessage 发了什么。帮我写 hook。",
+      "expected_output": "给出 Worker 构造和 postMessage 观察脚本，保留原有行为，并说明日志内容。",
+      "expectations": [
+        "应包含 Worker 构造函数或等价观察点",
+        "应包含 postMessage 相关观察",
+        "应保留原始 Worker 行为"
+      ],
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "我怀疑请求头里的 Authorization 是在 xhr 里被统一塞进去的，给我一个只在 header 名等于 Authorization 时断下来的脚本。",
+      "expected_output": "给出 XMLHttpRequest.setRequestHeader 的最小 hook，带条件判断和 debugger。",
+      "expectations": [
+        "应选择 XMLHttpRequest.setRequestHeader 作为主要 hook 点",
+        "应只在 header 名匹配 Authorization 时触发",
+        "应继续调用原始 setRequestHeader"
+      ],
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "页面里有一段代码会用 crypto.subtle.digest 和 getRandomValues，我想知道输入数据是什么。给我适合调试的 hook。",
+      "expected_output": "给出 crypto.subtle 和 getRandomValues 的观察型 hook，说明 ArrayBuffer 可能需要额外格式化。",
+      "expectations": [
+        "应覆盖 crypto.subtle.digest 或其所在原型链 hook",
+        "应覆盖 getRandomValues",
+        "应提示 ArrayBuffer 或 TypedArray 可能需要额外格式化显示"
+      ],
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "帮我找这个签名参数 sign 是在哪个函数里生成的，要函数位置和调用链。",
+      "expected_output": "不应直接停留在 hook 脚本大全，而应识别这更适合入口定位类 skill。",
+      "expectations": [
+        "不应把浏览器 hook 脚本当成唯一答案",
+        "应识别这是调用链定位问题",
+        "应与 camoufox-js-reverse 的边界保持一致"
+      ],
+      "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "把这段浏览器里的加密代码补环境后放到 Node.js 里跑起来。",
+      "expected_output": "不应触发本 skill 的主路线，而应识别为补环境类需求。",
+      "expectations": [
+        "不应把浏览器 hook 脚本当成主方案",
+        "应识别为 Node.js 补环境需求",
+        "应与 env-patch 的边界保持一致"
+      ],
+      "files": []
+    },
+    {
+      "id": 9,
+      "prompt": "我给了 fetch hook 脚本，但日志瞬间刷了上百行，根本看不清哪些请求带了 sign。帮我去掉无关请求，只看带了 sign 字段的 fetch。",
+      "expected_output": "应给出日志降噪方案：去重 key、计数、只展示前 N 个样本、按 URL 或 header 字段过滤。不应从零重写完整 hook。",
+      "expectations": [
+        "应包含去重 key 或计数方案",
+        "应建议按 sign/token/auth 等关键词过滤",
+        "应给出收缩日志的具体方法而不是替换整个 hook"
+      ],
+      "files": []
+    },
+    {
+      "id": 10,
+      "prompt": "我想知道是哪个 xhr 请求在 setRequestHeader 里写了 X-Bogus，并且这个请求的完整 URL 和 method 是什么。给一段能跑的最小脚本。",
+      "expected_output": "应给出带 request binding 的 xhr hook：记录 target=xhr、event=setRequestHeader、method、url、命中的 header 名。输出里要绑定请求上下文。",
+      "expectations": [
+        "应输出 target/event/method/url 的 request binding",
+        "应只在 header 名匹配 X-Bogus 时触发",
+        "应给出最小可执行脚本"
+      ],
+      "files": []
+    },
+    {
+      "id": 11,
+      "prompt": "我 hook 了 XMLHttpRequest.prototype.open 之后页面直接白屏了，什么都没加载。帮我分析可能是怎么被检测到的。",
+      "expected_output": "应分析可能的检测点：完整性检测、原型链检测、native 函数检测，说明 hook 可能改变行为或被检测，再建议收缩 hook 范围或改用断点。不应默认能绕过检测。",
+      "expectations": [
+        "应分析原型链、完整性或 native 检测导致的问题",
+        "应建议缩小 hook 范围或切换到更隐蔽的观测方式",
+        "不应承诺一定可以绕过检测"
+      ],
+      "files": []
+    },
+    {
+      "id": 12,
+      "prompt": "我想要一个能代替整个网络面板的全局 hook 脚本，同时监控 fetch、xhr、websocket、cookie、localStorage、canvas、eval，把日志全控制台输出。",
+      "expected_output": "应拒绝大范围全局 hook，指出会触发反模式（默认代理整页对象、日志刷屏、行为改变），建议只挂最可疑的一两个点。",
+      "expectations": [
+        "应拒绝全局大范围 hook",
+        "应指出日志刷屏、行为改变、反检测等风险",
+        "应建议只挂一两个最可疑的目标点"
+      ],
+      "files": []
+    }
+  ]
+}
