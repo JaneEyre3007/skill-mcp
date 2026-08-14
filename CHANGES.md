@@ -27,7 +27,7 @@
 
 ## 二、新建文件（原件中不存在）
 - `README.md`、`CHANGES.md`、`.gitignore`
-- `restore\restore.ps1`（一键恢复脚本，英文消息避免编码问题）
+- `restore\restore.ps1`（一键恢复脚本：`-InstallBase` 自动用 winget/npm 装 Git/Python/Node/DSH；自动复用 `git clone` 登录产生的 git 凭据走 GitHub API 下载私有 Release 包，无需手动建 token；`-GhToken`/`-ReleaseBaseUrl`/本地 `release-assets\` 三种备用下载通道；英文消息避免编码问题）
 - `docs\requirements-python.txt`（pip 精确版本：camoufox[geoip]==0.5.4、cdp-use==1.4.5、esprima==4.0.1、mcp==1.29.0、playwright==1.60.0、setuptools==76.0.0）
 - `dsh-preset\web-reverse\preset.yml`（与原机同名文件内容一致）
 - `mcps\camoufox-toolchain\runtime\README.md`、`runtimes\README.md`（占位说明）
