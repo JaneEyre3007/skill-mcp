@@ -56,16 +56,20 @@ web-reverse-backup/
 ```powershell
 git clone https://github.com/JaneEyre3007/skill-mcp.git web-reverse
 ```
-3 个大文件不在 git 里（体积限制），从 **GitHub Release** 下载（直接链接）：
-- <https://github.com/JaneEyre3007/skill-mcp/releases/download/v1.0.0/camoufox-reverse-135.0.1-beta.24.zip>（518 MB）
-- <https://github.com/JaneEyre3007/skill-mcp/releases/download/v1.0.0/CloakBrowser-146.0.7680.177.zip>（196 MB）
-- <https://github.com/JaneEyre3007/skill-mcp/releases/download/v1.0.0/FireFox-Reverse.zip>（126 MB）
+3 个大文件（约 840MB）在 GitHub Release `v1.0.0` 里。**本仓库是私有仓库**，推荐两种方式：
 
-> 更省事的办法：把 `-ReleaseBaseUrl` 传给恢复脚本，它会自动下载这三个文件：
-> ```powershell
-> powershell -ExecutionPolicy Bypass -File restore\restore.ps1 `
->   -ReleaseBaseUrl "https://github.com/JaneEyre3007/skill-mcp/releases/download/v1.0.0"
-> ```
+**方式 A（推荐，全自动）**：给 restore.ps1 一个 GitHub token，脚本走 API 自动下载并解压。
+网页登录 GitHub → Settings → Developer settings → Personal access tokens：
+- classic token：勾选 `repo` 范围；或
+- fine-grained token：仓库选本仓库，权限 Contents = Read-only。
+```powershell
+powershell -ExecutionPolicy Bypass -File restore\restore.ps1 -GhToken "<你的token>"
+```
+
+**方式 B（手动）**：浏览器登录 GitHub 后打开
+<https://github.com/JaneEyre3007/skill-mcp/releases/tag/v1.0.0> 手动下载 3 个 zip
+（camoufox-reverse-135.0.1-beta.24.zip / CloakBrowser-146.0.7680.177.zip / FireFox-Reverse.zip），
+放进仓库根目录 `release-assets\`（没有就新建），然后直接跑 `restore.ps1`（不带 token 参数）。
 
 ### 第 2 步：一键恢复
 ```powershell
@@ -77,8 +81,9 @@ powershell -ExecutionPolicy Bypass -File restore\restore.ps1
 并 `npm install` → 给 js-reverse / frx 补 `npm install` → 修补两个 skill 的路径配置文件 → 生成 DSH preset 到
 `%USERPROFILE%\.dsh\.agent-presets\web-reverse\`（自动把模板占位符替换成你机器上的真实路径）。
 
-> 若 zips 已手动下载到 `release-assets\`，脚本直接使用本地文件；否则用
-> `-ReleaseBaseUrl "https://github.com/JaneEyre3007/skill-mcp/releases/download/v1.0.0"` 让脚本自动下载。
+> 若 zips 已手动下载到 `release-assets\`，脚本直接使用本地文件；私有仓库建议用
+> `-GhToken`（API 下载，见第 1 步）；公开仓库可用
+> `-ReleaseBaseUrl "https://github.com/<OWNER>/<REPO>/releases/download/<TAG>"`。
 > 可选参数见脚本头部注释（`-PythonExe`、`-FirefoxRoot`、`-WmpfRoot`、`-DshHome` 等）。
 
 ### 第 3 步：启动两个"常驻服务"

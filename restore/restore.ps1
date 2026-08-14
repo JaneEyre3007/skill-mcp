@@ -12,8 +12,14 @@
 #   -DshHome <dir>       DSH home (default: %USERPROFILE%\.dsh)
 #   -FirefoxRoot <dir>   FireFox Reverse extraction root (default: D:\develop_software)
 #   -WmpfRoot <dir>      WMPFDebugger clone location (default: <RepoRoot>\runtimes\WMPFDebugger)
+#   -GhToken <pat>       GitHub token for downloading release assets from a
+#                        PRIVATE repo via the API (classic PAT with "repo"
+#                        scope, or fine-grained PAT with Contents: Read).
+#                        Strongly recommended for this repo.
+#   -GhRepo <owner/repo> repo for release downloads (default: JaneEyre3007/skill-mcp)
 #   -ReleaseBaseUrl <url> base URL of GitHub release assets, e.g.
-#                         https://github.com/<OWNER>/<REPO>/releases/download/<TAG>
+#                        https://github.com/<OWNER>/<REPO>/releases/download/<TAG>
+#                        (works for PUBLIC repos without a token)
 #                        (default: use local release-assets\ folder when present)
 #   -SkipNpm / -SkipPip / -SkipFetch / -SkipZips / -SkipClone / -SkipPreset
 # ============================================================================
@@ -25,6 +31,8 @@ param(
     [string]$FirefoxRoot = 'D:\develop_software',
     [string]$WmpfRoot = '',
     [string]$ReleaseBaseUrl = '',
+    [string]$GhToken = '',
+    [string]$GhRepo = 'JaneEyre3007/skill-mcp',
     [switch]$SkipNpm, [switch]$SkipPip, [switch]$SkipFetch,
     [switch]$SkipZips, [switch]$SkipClone, [switch]$SkipPreset
 )
@@ -47,6 +55,21 @@ function Extract-Zip([string]$zip, [string]$dest) {
 }
 
 function Get-Zip([string]$name) {
+    if ($GhToken) {
+        $h = @{ Authorization = "Bearer $GhToken"; 'User-Agent' = 'web-reverse-restore'; 'X-GitHub-Api-Version' = '2022-11-28' }
+        $rel = Invoke-RestMethod -Headers $h -Uri "https://api.github.com/repos/$GhRepo/releases/latest"
+        $asset = $rel.assets | Where-Object name -eq $name | Select-Object -First 1
+        if (-not $asset) { return $null }
+        $out = Join-Path $env:TEMP $name
+        $curl = Get-Command curl.exe -ErrorAction SilentlyContinue
+        if ($curl) {
+            & $curl.Source -sS -L --location-trusted -H "Authorization: Bearer $GhToken" -H "Accept: application/octet-stream" -o $out $asset.url
+            if ($LASTEXITCODE -eq 0 -and (Test-Path $out)) { return $out }
+            Warn "curl download failed; trying Invoke-WebRequest"
+        }
+        Invoke-WebRequest -Headers $h -Uri $asset.url -OutFile $out
+        return $out
+    }
     if ($ReleaseBaseUrl) {
         $out = Join-Path $env:TEMP $name
         Invoke-WebRequest -Uri "$ReleaseBaseUrl/$name" -OutFile $out
@@ -124,7 +147,7 @@ if (-not $SkipZips) {
             Extract-Zip $z (Join-Path $RepoRoot $names[$n])
             OK "$n extracted"
         } else {
-            Warn "zip not found: $n (supply -ReleaseBaseUrl, or place it in release-assets\)"
+            Warn "zip not found: $n (supply -GhToken for the private repo, -ReleaseBaseUrl for public, or place it in release-assets\)"
         }
     }
 }
